@@ -67,6 +67,7 @@ export default function CustomerDetail() {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-gray-50">
           {customer.phone && <div><p className="text-xs text-gray-400 mb-0.5">Telefone</p><p className="text-sm font-medium">{customer.phone}</p></div>}
+          {customer.lead_source && <div><p className="text-xs text-gray-400 mb-0.5">Origem</p><p className="text-sm font-medium">{customer.lead_source}</p></div>}
           {customer.objective && <div><p className="text-xs text-gray-400 mb-0.5">Objetivo</p><p className="text-sm font-medium">{customer.objective}</p></div>}
           {customer.assigned_to && <div><p className="text-xs text-gray-400 mb-0.5">Responsável</p><p className="text-sm font-medium">{customer.assigned_to}</p></div>}
           {customer.next_action && <div><p className="text-xs text-gray-400 mb-0.5">Próxima Ação</p><p className="text-sm font-medium text-orange-600">{customer.next_action}</p></div>}

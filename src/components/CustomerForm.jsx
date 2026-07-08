@@ -7,14 +7,19 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { STATUS_CONFIG, PROFILE_CONFIG } from '@/lib/statusConfig';
 
+const LEAD_SOURCES = ['Instagram', 'Facebook', 'WhatsApp', 'Telefone', 'Presencial', 'Indicação'];
+
 export default function CustomerForm({ customer, onSave, onClose }) {
   const [form, setForm] = useState({
     name: '', phone: '', objective: '', status: 'novo_contato', profile: 'outro',
     notes: '', next_action: '', next_action_date: '', assigned_to: '',
+    lead_source: '', lead_source_custom: '',
   });
 
   useEffect(() => {
     if (customer) {
+      const existingSource = customer.lead_source || '';
+      const isPreset = LEAD_SOURCES.includes(existingSource);
       setForm({
         name: customer.name || '', phone: customer.phone || '',
         objective: customer.objective || '', status: customer.status || 'novo_contato',
@@ -22,13 +27,20 @@ export default function CustomerForm({ customer, onSave, onClose }) {
         next_action: customer.next_action || '',
         next_action_date: customer.next_action_date ? customer.next_action_date.split('T')[0] : '',
         assigned_to: customer.assigned_to || '',
+        lead_source: isPreset ? existingSource : (existingSource ? '__outro' : ''),
+        lead_source_custom: isPreset ? '' : existingSource,
       });
     }
   }, [customer]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(form);
+    const data = { ...form };
+    if (data.lead_source === '__outro') {
+      data.lead_source = data.lead_source_custom || '';
+    }
+    delete data.lead_source_custom;
+    onSave(data);
   };
 
   return (
@@ -45,6 +57,24 @@ export default function CustomerForm({ customer, onSave, onClose }) {
           <div>
             <Label className="mb-1.5 block">Telefone</Label>
             <Input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="(48) 99999-9999" />
+          </div>
+          <div>
+            <Label className="mb-1.5 block">Origem do Lead</Label>
+            <Select value={form.lead_source} onValueChange={v => setForm({ ...form, lead_source: v })}>
+              <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+              <SelectContent>
+                {LEAD_SOURCES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                <SelectItem value="__outro">Outro / Campanha específica</SelectItem>
+              </SelectContent>
+            </Select>
+            {form.lead_source === '__outro' && (
+              <Input
+                value={form.lead_source_custom}
+                onChange={e => setForm({ ...form, lead_source_custom: e.target.value })}
+                placeholder="Ex: Campanha Verão Instagram, Promoção Dia das Mães..."
+                className="mt-2"
+              />
+            )}
           </div>
           <div>
             <Label className="mb-1.5 block">Objetivo</Label>
