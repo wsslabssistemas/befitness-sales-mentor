@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Trophy, Sparkles, TrendingUp, MessageSquare } from 'lucide-react';
+import { Trophy, Sparkles, TrendingUp, MessageSquare, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import WeekCalendar from '@/components/WeekCalendar';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
@@ -8,6 +8,9 @@ import { RESULT_CONFIG, STATUS_CONFIG } from '@/lib/statusConfig';
 import SellerReport from '@/components/SellerReport';
 import LeadSourceReport from '@/components/LeadSourceReport';
 import { sendDailySummary } from '@/lib/dailySummary';
+import SalesFunnel from '@/components/SalesFunnel';
+import ResponseTime from '@/components/ResponseTime';
+import CoolingLeads from '@/components/CoolingLeads';
 
 export default function Indicators() {
   const [interactions, setInteractions] = useState([]);
@@ -17,6 +20,7 @@ export default function Indicators() {
   const [emailSaved, setEmailSaved] = useState(false);
   const [sendingSummary, setSendingSummary] = useState(false);
   const [summaryResult, setSummaryResult] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -27,6 +31,7 @@ export default function Indicators() {
       setCustomers(custs);
     }).catch(console.error).finally(() => setLoading(false));
     base44.entities.Setting.filter({ key: 'team_email' }).then(s => { if (s.length > 0) setTeamEmail(s[0].value); }).catch(console.error);
+    base44.auth.me().then(u => setIsAdmin(u?.role === 'admin')).catch(() => {});
   }, []);
 
   if (loading) return <div className="p-8 text-center text-gray-400">Carregando...</div>;
@@ -107,6 +112,8 @@ export default function Indicators() {
         </div>
       </div>
 
+      <SalesFunnel customers={customers} />
+
       <WeekCalendar customers={customers} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -148,8 +155,20 @@ export default function Indicators() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        <SellerReport interactions={interactions} customers={customers} />
+        {isAdmin ? (
+          <SellerReport interactions={interactions} customers={customers} />
+        ) : (
+          <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col items-center justify-center text-center">
+            <Lock className="w-6 h-6 text-gray-300 mb-2" />
+            <p className="text-sm text-gray-400">Relatório de vendedores disponível apenas para administradores</p>
+          </div>
+        )}
         <LeadSourceReport customers={customers} />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        <ResponseTime customers={customers} interactions={interactions} />
+        <CoolingLeads customers={customers} interactions={interactions} />
       </div>
 
       <div className="bg-white rounded-2xl border border-gray-100 p-6 mt-6">
