@@ -6,10 +6,17 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { STATUS_CONFIG, PROFILE_CONFIG } from '@/lib/statusConfig';
+import { base44 } from '@/api/base44Client';
 
 const LEAD_SOURCES = ['Instagram', 'Facebook', 'WhatsApp', 'Telefone', 'Presencial', 'Indicação'];
 
 export default function CustomerForm({ customer, onSave, onClose }) {
+  const [vendors, setVendors] = useState([]);
+
+  useEffect(() => {
+    base44.entities.Vendor.filter({ status: 'ativo' }).then(setVendors).catch(console.error);
+  }, []);
+
   const [form, setForm] = useState({
     name: '', phone: '', objective: '', status: 'novo_contato', profile: 'outro',
     notes: '', next_action: '', next_action_date: '', assigned_to: '',
@@ -114,7 +121,15 @@ export default function CustomerForm({ customer, onSave, onClose }) {
           </div>
           <div>
             <Label className="mb-1.5 block">Responsável Atual</Label>
-            <Input value={form.assigned_to} onChange={e => setForm({ ...form, assigned_to: e.target.value })} placeholder="Nome do recepcionista" />
+            <Select value={form.assigned_to} onValueChange={v => setForm({ ...form, assigned_to: v })}>
+              <SelectTrigger><SelectValue placeholder="Selecionar..." /></SelectTrigger>
+              <SelectContent>
+                {form.assigned_to && !vendors.some(v => v.name === form.assigned_to) && (
+                  <SelectItem value={form.assigned_to}>{form.assigned_to}</SelectItem>
+                )}
+                {vendors.map(v => <SelectItem key={v.id} value={v.name}>{v.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <Label className="mb-1.5 block">Observações</Label>

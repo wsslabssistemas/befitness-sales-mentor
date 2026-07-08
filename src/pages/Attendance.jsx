@@ -15,6 +15,8 @@ export default function Attendance() {
   const preselectedCustomer = searchParams.get('customer');
 
   const [customers, setCustomers] = useState([]);
+  const [vendors, setVendors] = useState([]);
+  const [selectedVendor, setSelectedVendor] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(preselectedCustomer || '');
   const [profile, setProfile] = useState('outro');
   const [conversation, setConversation] = useState('');
@@ -24,6 +26,7 @@ export default function Attendance() {
 
   useEffect(() => {
     base44.entities.Customer.list('-created_date', 200).then(setCustomers).catch(console.error);
+    base44.entities.Vendor.filter({ status: 'ativo' }).then(setVendors).catch(console.error);
   }, []);
 
   const handleAnalyze = async () => {
@@ -137,6 +140,7 @@ Analise esta conversa e gere a melhor resposta para enviar ao cliente agora.`;
         next_step: analysis?.proximo_passo || '',
         result,
         profile_used: profile,
+        handled_by: selectedVendor || '',
       });
 
       const newStatus = RESULT_TO_STATUS[result];
@@ -172,7 +176,7 @@ Analise esta conversa e gere a melhor resposta para enviar ao cliente agora.`;
         <p className="text-gray-500 text-sm mt-1">Cole a conversa do WhatsApp e receba a melhor resposta com explicação comercial</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div>
           <Label className="mb-1.5 block">Cliente</Label>
           <Select value={selectedCustomer} onValueChange={setSelectedCustomer}>
@@ -180,6 +184,17 @@ Analise esta conversa e gere a melhor resposta para enviar ao cliente agora.`;
             <SelectContent>
               {customers.map(c => (
                 <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label className="mb-1.5 block">Atendente</Label>
+          <Select value={selectedVendor} onValueChange={setSelectedVendor}>
+            <SelectTrigger><SelectValue placeholder="Selecionar..." /></SelectTrigger>
+            <SelectContent>
+              {vendors.map(v => (
+                <SelectItem key={v.id} value={v.name}>{v.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
