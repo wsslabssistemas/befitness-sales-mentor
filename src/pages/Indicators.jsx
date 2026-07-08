@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Trophy, Sparkles, TrendingUp, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import WeekCalendar from '@/components/WeekCalendar';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { RESULT_CONFIG, STATUS_CONFIG } from '@/lib/statusConfig';
 
@@ -86,6 +87,8 @@ export default function Indicators() {
           <p className="text-sm opacity-80">{matriculas} matrículas / {total} atendimentos</p>
         </div>
       </div>
+
+      <WeekCalendar customers={customers} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-2xl border border-gray-100 p-6">

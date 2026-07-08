@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { Users, MessageSquare, BookOpen, BarChart3, Dumbbell } from 'lucide-react';
+import { Users, MessageSquare, BookOpen, BarChart3 } from 'lucide-react';
+
+const LOGO_URL = 'https://media.base44.com/images/public/6a4e5171867839bd68b9280e/632f9e5d1_WhatsAppImage2026-07-08at123414.jpeg';
 
 const navItems = [
   { to: '/', label: 'Clientes', icon: Users, end: true },
@@ -34,9 +36,7 @@ export default function Sidebar() {
   return (
     <aside className="w-16 lg:w-64 bg-white border-r border-gray-100 flex-shrink-0 flex flex-col h-screen sticky top-0 z-10">
       <div className="p-4 lg:p-6 flex items-center gap-2.5 border-b border-gray-50">
-        <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center flex-shrink-0">
-          <Dumbbell className="w-5 h-5 text-white" />
-        </div>
+        <img src={LOGO_URL} alt="Be Fitness" className="w-10 h-10 rounded-xl object-cover flex-shrink-0" />
         <div className="hidden lg:block">
           <p className="font-bold text-gray-900 text-sm leading-tight">Be Fitness</p>
           <p className="text-xs text-gray-400">Assistente Comercial</p>
