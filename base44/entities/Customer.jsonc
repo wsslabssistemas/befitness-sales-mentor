@@ -1,0 +1,70 @@
+{
+  "name": "Customer",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Nome"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Telefone"
+    },
+    "objective": {
+      "type": "string",
+      "title": "Objetivo"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "novo_contato",
+        "descobrindo_necessidade",
+        "proposta_enviada",
+        "semana_experimental",
+        "negociacao",
+        "matriculado",
+        "perdido"
+      ],
+      "default": "novo_contato"
+    },
+    "profile": {
+      "type": "string",
+      "title": "Perfil",
+      "enum": [
+        "iniciante",
+        "experiente",
+        "emagrecer",
+        "saude",
+        "melhor_idade",
+        "outro"
+      ],
+      "default": "outro"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Observa\u00e7\u00f5es"
+    },
+    "next_action": {
+      "type": "string",
+      "title": "Pr\u00f3xima A\u00e7\u00e3o"
+    },
+    "next_action_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Data da Pr\u00f3xima A\u00e7\u00e3o"
+    },
+    "assigned_to": {
+      "type": "string",
+      "title": "Respons\u00e1vel Atual"
+    },
+    "last_interaction_date": {
+      "type": "string",
+      "format": "date-time",
+      "title": "\u00daltima Intera\u00e7\u00e3o"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

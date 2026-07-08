@@ -1,0 +1,42 @@
+{
+  "name": "LibraryEntry",
+  "type": "object",
+  "properties": {
+    "category_id": {
+      "type": "string",
+      "title": "Categoria"
+    },
+    "category_name": {
+      "type": "string",
+      "title": "Nome da Categoria"
+    },
+    "question": {
+      "type": "string",
+      "title": "Pergunta Comum"
+    },
+    "answer": {
+      "type": "string",
+      "title": "Resposta Padr\u00e3o"
+    },
+    "objective": {
+      "type": "string",
+      "title": "Objetivo"
+    },
+    "technique": {
+      "type": "string",
+      "title": "T\u00e9cnica"
+    },
+    "common_mistakes": {
+      "type": "string",
+      "title": "Erros Comuns"
+    },
+    "next_step": {
+      "type": "string",
+      "title": "Pr\u00f3ximo Passo"
+    }
+  },
+  "required": [
+    "category_id",
+    "question"
+  ]
+}

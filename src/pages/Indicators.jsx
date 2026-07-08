@@ -1,0 +1,113 @@
+import { useState, useEffect } from 'react';
+import { base44 } from '@/api/base44Client';
+import { Trophy, Sparkles, TrendingUp, MessageSquare } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { RESULT_CONFIG, STATUS_CONFIG } from '@/lib/statusConfig';
+
+export default function Indicators() {
+  const [interactions, setInteractions] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      base44.entities.Interaction.list('-created_date', 500),
+      base44.entities.Customer.list('-created_date', 500),
+    ]).then(([ints, custs]) => {
+      setInteractions(ints);
+      setCustomers(custs);
+    }).catch(console.error).finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <div className="p-8 text-center text-gray-400">Carregando...</div>;
+
+  const total = interactions.length;
+  const matriculas = interactions.filter(i => i.result === 'matriculou').length;
+  const experimentais = interactions.filter(i => i.result === 'semana_experimental').length;
+  const visitas = interactions.filter(i => i.result === 'marcou_visita').length;
+  const taxa = total > 0 ? ((matriculas / total) * 100).toFixed(1) : 0;
+
+  const resultCounts = Object.keys(RESULT_CONFIG).filter(k => k !== 'pendente').map(key => ({
+    name: RESULT_CONFIG[key].label.split(' ').slice(0, 2).join(' '),
+    count: interactions.filter(i => i.result === key).length,
+  }));
+
+  const statusCounts = customers.reduce((acc, c) => {
+    acc[c.status] = (acc[c.status] || 0) + 1;
+    return acc;
+  }, {});
+
+  const metrics = [
+    { label: 'Atendimentos', value: total, icon: MessageSquare, color: 'bg-blue-500' },
+    { label: 'Matrículas', value: matriculas, icon: Trophy, color: 'bg-orange-500' },
+    { label: 'Semanas Experimentais', value: experimentais, icon: Sparkles, color: 'bg-purple-500' },
+    { label: 'Visitas Agendadas', value: visitas, icon: TrendingUp, color: 'bg-emerald-500' },
+  ];
+
+  return (
+    <div className="p-6 md:p-8 max-w-5xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">Indicadores</h1>
+        <p className="text-gray-500 text-sm mt-1">Acompanhamento de conversão e atendimentos</p>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        {metrics.map(m => (
+          <div key={m.label} className="bg-white rounded-2xl border border-gray-100 p-5">
+            <div className={`w-10 h-10 ${m.color} rounded-xl flex items-center justify-center mb-3`}>
+              <m.icon className="w-5 h-5 text-white" />
+            </div>
+            <p className="text-2xl font-bold text-gray-900">{m.value}</p>
+            <p className="text-sm text-gray-500">{m.label}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-gradient-to-br from-orange-500 to-amber-500 rounded-2xl p-6 mb-6 text-white">
+        <p className="text-sm opacity-90 mb-1">Taxa de Conversão Geral</p>
+        <div className="flex items-baseline gap-2">
+          <p className="text-4xl font-bold">{taxa}%</p>
+          <p className="text-sm opacity-80">{matriculas} matrículas / {total} atendimentos</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white rounded-2xl border border-gray-100 p-6">
+          <p className="font-semibold text-gray-900 mb-4">Resultados dos Atendimentos</p>
+          {total > 0 ? (
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={resultCounts}>
+                <XAxis dataKey="name" tick={{ fontSize: 10 }} interval={0} angle={-20} textAnchor="end" height={60} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
+                <Tooltip cursor={{ fill: '#f8f9fa' }} contentStyle={{ borderRadius: '12px', border: '1px solid #f0f0f0' }} />
+                <Bar dataKey="count" radius={[8, 8, 0, 0]}>
+                  {resultCounts.map((_, i) => <Cell key={i} fill="#f97316" />)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          ) : <p className="text-center text-gray-400 py-12">Sem dados ainda</p>}
+        </div>
+
+        <div className="bg-white rounded-2xl border border-gray-100 p-6">
+          <p className="font-semibold text-gray-900 mb-4">Clientes por Status</p>
+          <div className="space-y-2.5">
+            {Object.entries(STATUS_CONFIG).map(([key, cfg]) => {
+              const count = statusCounts[key] || 0;
+              const pct = customers.length > 0 ? (count / customers.length * 100) : 0;
+              return (
+                <div key={key} className="flex items-center gap-3">
+                  <span className={`w-2 h-2 rounded-full ${cfg.dot} flex-shrink-0`} />
+                  <span className="text-xs text-gray-600 w-28 truncate">{cfg.label}</span>
+                  <div className="flex-1 bg-gray-50 rounded-full h-5 overflow-hidden">
+                    <div className={`h-full ${cfg.dot} opacity-60 rounded-full transition-all`} style={{ width: `${Math.max(pct, 2)}%` }} />
+                  </div>
+                  <span className="text-sm font-medium text-gray-700 w-6 text-right">{count}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

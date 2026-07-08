@@ -1,0 +1,63 @@
+{
+  "name": "Interaction",
+  "type": "object",
+  "properties": {
+    "customer_id": {
+      "type": "string",
+      "title": "Cliente"
+    },
+    "customer_name": {
+      "type": "string",
+      "title": "Nome do Cliente"
+    },
+    "conversation": {
+      "type": "string",
+      "title": "Conversa"
+    },
+    "suggested_response": {
+      "type": "string",
+      "title": "Resposta Sugerida"
+    },
+    "objective": {
+      "type": "string",
+      "title": "Objetivo"
+    },
+    "explanation": {
+      "type": "string",
+      "title": "Explica\u00e7\u00e3o"
+    },
+    "techniques": {
+      "type": "string",
+      "title": "T\u00e9cnicas"
+    },
+    "next_step": {
+      "type": "string",
+      "title": "Pr\u00f3ximo Passo"
+    },
+    "result": {
+      "type": "string",
+      "title": "Resultado",
+      "enum": [
+        "pendente",
+        "respondeu",
+        "marcou_visita",
+        "semana_experimental",
+        "matriculou",
+        "nao_respondeu",
+        "desistiu"
+      ],
+      "default": "pendente"
+    },
+    "handled_by": {
+      "type": "string",
+      "title": "Atendente"
+    },
+    "profile_used": {
+      "type": "string",
+      "title": "Perfil Usado"
+    }
+  },
+  "required": [
+    "customer_id"
+  ]
+}
