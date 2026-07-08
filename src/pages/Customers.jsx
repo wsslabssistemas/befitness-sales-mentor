@@ -1,13 +1,21 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { Plus, Search, Phone, ChevronRight } from 'lucide-react';
+import { Plus, Search, Phone, ChevronRight, MessageCircle, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import StatusBadge from '@/components/StatusBadge';
 import CustomerForm from '@/components/CustomerForm';
 import OverdueWidget from '@/components/OverdueWidget';
 import { STATUS_CONFIG } from '@/lib/statusConfig';
+
+function getWhatsAppLink(phone) {
+  if (!phone) return '#';
+  let digits = phone.replace(/\D/g, '');
+  if (digits.length === 0) return '#';
+  if (!digits.startsWith('55')) digits = '55' + digits;
+  return `https://wa.me/${digits}`;
+}
 
 function sortByUrgency(customers) {
   const now = new Date();
@@ -29,6 +37,7 @@ export default function Customers() {
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [showForm, setShowForm] = useState(false);
+  const [attentionToday, setAttentionToday] = useState(false);
 
   useEffect(() => { loadCustomers(); }, []);
 
@@ -56,14 +65,16 @@ export default function Customers() {
     } catch (e) { console.error(e); }
   };
 
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+
   const filtered = customers.filter(c => {
     const matchesSearch = !search || c.name?.toLowerCase().includes(search.toLowerCase()) || c.phone?.includes(search);
     const matchesStatus = filterStatus === 'all' || c.status === filterStatus;
-    return matchesSearch && matchesStatus;
+    const matchesAttention = !attentionToday || (c.status !== 'matriculado' && c.status !== 'perdido' && c.next_action_date && new Date(c.next_action_date) <= now);
+    return matchesSearch && matchesStatus && matchesAttention;
   });
 
   const sorted = sortByUrgency(filtered);
-  const now = new Date(); now.setHours(0, 0, 0, 0);
 
   return (
     <div className="p-6 md:p-8 max-w-5xl mx-auto">
@@ -88,6 +99,15 @@ export default function Customers() {
             <option key={key} value={key}>{cfg.label}</option>
           ))}
         </select>
+        <button
+          onClick={() => setAttentionToday(!attentionToday)}
+          className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-1.5 flex-shrink-0 ${
+            attentionToday ? 'bg-orange-500 text-white' : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-50'
+          }`}
+        >
+          <AlertCircle className="w-4 h-4" />
+          Atenção Hoje
+        </button>
       </div>
 
       {!loading && <OverdueWidget customers={customers} />}
@@ -124,6 +144,18 @@ export default function Customers() {
                         {customer.next_action && <span className="text-orange-600">→ {customer.next_action}</span>}
                       </div>
                     </div>
+                    {customer.phone && (
+                      <a
+                        href={getWhatsAppLink(customer.phone)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={e => e.stopPropagation()}
+                        className="w-8 h-8 rounded-lg bg-green-50 hover:bg-green-100 flex items-center justify-center flex-shrink-0 transition-colors"
+                        title="Abrir WhatsApp"
+                      >
+                        <MessageCircle className="w-4 h-4 text-green-600" />
+                      </a>
+                    )}
                     <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-orange-400 flex-shrink-0" />
                   </div>
                 </div>

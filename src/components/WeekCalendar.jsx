@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, CalendarDays } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CalendarDays, Download } from 'lucide-react';
 
 export default function WeekCalendar({ customers }) {
   const [weekOffset, setWeekOffset] = useState(0);
@@ -46,6 +46,33 @@ export default function WeekCalendar({ customers }) {
   const totalEvents = Object.values(eventsByDay).reduce((sum, arr) => sum + arr.length, 0);
   const weekLabel = `${weekDays[0].getDate()} ${monthNames[weekDays[0].getMonth()]} — ${weekDays[6].getDate()} ${monthNames[weekDays[6].getMonth()]}`;
 
+  const exportICS = () => {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const weekEnd = new Date(weekDays[6]); weekEnd.setHours(23, 59, 59, 999);
+    const events = [];
+
+    customers.forEach(c => {
+      if (!c.next_action_date) return;
+      if (c.status === 'matriculado' || c.status === 'perdido') return;
+      const d = new Date(c.next_action_date);
+      if (d < today || d > weekEnd) return;
+      const dateStr = d.toISOString().split('T')[0].replace(/-/g, '');
+      events.push(
+        `BEGIN:VEVENT\nUID:${c.id}@befitness\nDTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z\nDTSTART;VALUE=DATE:${dateStr}\nSUMMARY:${c.name} — ${c.next_action || 'Atendimento'}\nDESCRIPTION:Cliente: ${c.name}\\\\nAção: ${c.next_action || 'Atendimento'}\\\\nTelefone: ${c.phone || 'N/A'}\nEND:VEVENT`
+      );
+    });
+
+    if (events.length === 0) return;
+    const ics = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Be Fitness//Agenda//PT\n${events.join('\n')}\nEND:VCALENDAR`;
+    const blob = new Blob([ics], { type: 'text/calendar' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'agenda-befitness.ics';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-6">
       <div className="flex items-center justify-between mb-4">
@@ -57,6 +84,10 @@ export default function WeekCalendar({ customers }) {
           <p className="text-sm text-gray-400">{weekLabel} • {totalEvents} compromisso(s)</p>
         </div>
         <div className="flex gap-1">
+          <button onClick={exportICS} className="px-3 h-8 rounded-lg border border-gray-200 hover:bg-gray-50 text-xs font-medium text-gray-500 flex items-center gap-1.5">
+            <Download className="w-3 h-3" />
+            Exportar
+          </button>
           <button onClick={() => setWeekOffset(w => w - 1)} className="w-8 h-8 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-500">
             <ChevronLeft className="w-4 h-4" />
           </button>
