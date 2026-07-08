@@ -5,6 +5,9 @@ import { Button } from '@/components/ui/button';
 import WeekCalendar from '@/components/WeekCalendar';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { RESULT_CONFIG, STATUS_CONFIG } from '@/lib/statusConfig';
+import SellerReport from '@/components/SellerReport';
+import LeadSourceReport from '@/components/LeadSourceReport';
+import { sendDailySummary } from '@/lib/dailySummary';
 
 export default function Indicators() {
   const [interactions, setInteractions] = useState([]);
@@ -12,6 +15,8 @@ export default function Indicators() {
   const [loading, setLoading] = useState(true);
   const [teamEmail, setTeamEmail] = useState('');
   const [emailSaved, setEmailSaved] = useState(false);
+  const [sendingSummary, setSendingSummary] = useState(false);
+  const [summaryResult, setSummaryResult] = useState(null);
 
   useEffect(() => {
     Promise.all([
@@ -36,6 +41,20 @@ export default function Indicators() {
       }
       setEmailSaved(true);
     } catch (e) { console.error(e); }
+  };
+
+  const handleSendSummary = async () => {
+    if (!teamEmail) return;
+    setSendingSummary(true);
+    setSummaryResult(null);
+    try {
+      const result = await sendDailySummary(teamEmail);
+      setSummaryResult(result);
+    } catch (e) {
+      console.error(e);
+      setSummaryResult({ sent: false, reason: 'error' });
+    }
+    setSendingSummary(false);
   };
 
   const total = interactions.length;
@@ -128,10 +147,15 @@ export default function Indicators() {
         </div>
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        <SellerReport interactions={interactions} customers={customers} />
+        <LeadSourceReport customers={customers} />
+      </div>
+
       <div className="bg-white rounded-2xl border border-gray-100 p-6 mt-6">
         <p className="font-semibold text-gray-900 mb-1">Notificações por Email</p>
-        <p className="text-sm text-gray-500 mb-4">Cadastre o email da equipe para receber aviso automático quando um novo cliente entrar na base</p>
-        <div className="flex gap-2">
+        <p className="text-sm text-gray-500 mb-4">Cadastre o email da equipe. O resumo diário (retornos pendentes + agenda do dia) é enviado automaticamente uma vez por dia quando alguém abre o sistema.</p>
+        <div className="flex gap-2 mb-3">
           <input
             type="email"
             value={teamEmail}
@@ -143,6 +167,18 @@ export default function Indicators() {
             {emailSaved ? '✓ Salvo' : 'Salvar'}
           </Button>
         </div>
+        <Button variant="outline" className="w-full" onClick={handleSendSummary} disabled={sendingSummary || !teamEmail}>
+          {sendingSummary ? 'Enviando...' : '📧 Enviar resumo diário agora'}
+        </Button>
+        {summaryResult && (
+          <p className="text-sm mt-2 text-center">
+            {summaryResult.sent
+              ? `✓ Resumo enviado! (${summaryResult.overdue} atrasado(s), ${summaryResult.today} para hoje, ${summaryResult.upcoming} na semana)`
+              : summaryResult.reason === 'nothing'
+                ? 'Nada pendente para reportar hoje.'
+                : 'Erro ao enviar. Tente novamente.'}
+          </p>
+        )}
       </div>
     </div>
   );
