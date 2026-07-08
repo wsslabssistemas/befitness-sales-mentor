@@ -1,4 +1,6 @@
+import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
+import { base44 } from '@/api/base44Client';
 import { Users, MessageSquare, BookOpen, BarChart3, Dumbbell } from 'lucide-react';
 
 const navItems = [
@@ -9,6 +11,26 @@ const navItems = [
 ];
 
 export default function Sidebar() {
+  const [overdueCount, setOverdueCount] = useState(0);
+
+  useEffect(() => {
+    const loadCount = async () => {
+      try {
+        const customers = await base44.entities.Customer.list('-created_date', 200);
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        const count = customers.filter(c => {
+          if (c.status === 'matriculado' || c.status === 'perdido') return false;
+          if (!c.next_action_date) return false;
+          return new Date(c.next_action_date) < today;
+        }).length;
+        setOverdueCount(count);
+      } catch (e) { console.error(e); }
+    };
+    loadCount();
+    const unsubscribe = base44.entities.Customer.subscribe(() => loadCount());
+    return unsubscribe;
+  }, []);
+
   return (
     <aside className="w-16 lg:w-64 bg-white border-r border-gray-100 flex-shrink-0 flex flex-col h-screen sticky top-0 z-10">
       <div className="p-4 lg:p-6 flex items-center gap-2.5 border-b border-gray-50">
@@ -35,7 +57,12 @@ export default function Sidebar() {
             }
           >
             <Icon className="w-5 h-5 flex-shrink-0" />
-            <span className="hidden lg:inline">{label}</span>
+            <span className="hidden lg:inline flex-1">{label}</span>
+            {to === '/' && overdueCount > 0 && (
+              <span className="bg-red-500 text-white text-xs font-bold rounded-full min-w-5 h-5 px-1.5 flex items-center justify-center">
+                {overdueCount}
+              </span>
+            )}
           </NavLink>
         ))}
       </nav>

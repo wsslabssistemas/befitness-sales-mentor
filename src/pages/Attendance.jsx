@@ -142,11 +142,19 @@ Analise esta conversa e gere a melhor resposta para enviar ao cliente agora.`;
       const newStatus = RESULT_TO_STATUS[result];
       const updateData = { last_interaction_date: new Date().toISOString() };
       if (newStatus) updateData.status = newStatus;
-      if (result === 'nao_respondeu') {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        updateData.next_action = 'Retornar contato';
-        updateData.next_action_date = tomorrow.toISOString().split('T')[0];
+      const NEXT_ACTION_MAP = {
+        respondeu: { action: 'Continuar conversa e descobrir necessidades', days: 2 },
+        marcou_visita: { action: 'Confirmar visita', days: 1 },
+        semana_experimental: { action: 'Acompanhar experiência', days: 3 },
+        matriculou: { action: 'Acompanhar primeiros treinos', days: 2 },
+        nao_respondeu: { action: 'Retornar contato', days: 1 },
+      };
+      const nextActionInfo = NEXT_ACTION_MAP[result];
+      if (nextActionInfo) {
+        const date = new Date();
+        date.setDate(date.getDate() + nextActionInfo.days);
+        updateData.next_action = nextActionInfo.action;
+        updateData.next_action_date = date.toISOString().split('T')[0];
       }
       await base44.entities.Customer.update(selectedCustomer, updateData);
 

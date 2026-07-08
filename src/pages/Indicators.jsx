@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Trophy, Sparkles, TrendingUp, MessageSquare } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { RESULT_CONFIG, STATUS_CONFIG } from '@/lib/statusConfig';
 
@@ -8,6 +9,8 @@ export default function Indicators() {
   const [interactions, setInteractions] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [teamEmail, setTeamEmail] = useState('');
+  const [emailSaved, setEmailSaved] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -17,9 +20,22 @@ export default function Indicators() {
       setInteractions(ints);
       setCustomers(custs);
     }).catch(console.error).finally(() => setLoading(false));
+    base44.entities.Setting.filter({ key: 'team_email' }).then(s => { if (s.length > 0) setTeamEmail(s[0].value); }).catch(console.error);
   }, []);
 
   if (loading) return <div className="p-8 text-center text-gray-400">Carregando...</div>;
+
+  const handleSaveEmail = async () => {
+    try {
+      const existing = await base44.entities.Setting.filter({ key: 'team_email' });
+      if (existing.length > 0) {
+        await base44.entities.Setting.update(existing[0].id, { key: 'team_email', value: teamEmail });
+      } else {
+        await base44.entities.Setting.create({ key: 'team_email', value: teamEmail });
+      }
+      setEmailSaved(true);
+    } catch (e) { console.error(e); }
+  };
 
   const total = interactions.length;
   const matriculas = interactions.filter(i => i.result === 'matriculou').length;
@@ -106,6 +122,23 @@ export default function Indicators() {
               );
             })}
           </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-gray-100 p-6 mt-6">
+        <p className="font-semibold text-gray-900 mb-1">Notificações por Email</p>
+        <p className="text-sm text-gray-500 mb-4">Cadastre o email da equipe para receber aviso automático quando um novo cliente entrar na base</p>
+        <div className="flex gap-2">
+          <input
+            type="email"
+            value={teamEmail}
+            onChange={e => { setTeamEmail(e.target.value); setEmailSaved(false); }}
+            placeholder="equipe@befitness.com.br"
+            className="flex-1 px-3 py-2 rounded-lg border border-gray-200 text-sm"
+          />
+          <Button className="bg-orange-500 hover:bg-orange-600" onClick={handleSaveEmail}>
+            {emailSaved ? '✓ Salvo' : 'Salvar'}
+          </Button>
         </div>
       </div>
     </div>

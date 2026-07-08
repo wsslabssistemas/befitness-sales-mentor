@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import StatusBadge from '@/components/StatusBadge';
 import CustomerForm from '@/components/CustomerForm';
+import OverdueWidget from '@/components/OverdueWidget';
 import { STATUS_CONFIG } from '@/lib/statusConfig';
 
 function sortByUrgency(customers) {
@@ -43,6 +44,16 @@ export default function Customers() {
     await base44.entities.Customer.create(formData);
     setShowForm(false);
     loadCustomers();
+    try {
+      const settings = await base44.entities.Setting.filter({ key: 'team_email' });
+      if (settings.length > 0 && settings[0].value) {
+        await base44.integrations.Core.SendEmail({
+          to: settings[0].value,
+          subject: `Novo cliente: ${formData.name}`,
+          body: `Um novo cliente entrou na base da Be Fitness!\n\nNome: ${formData.name}\n${formData.phone ? `Telefone: ${formData.phone}\n` : ''}${formData.objective ? `Objetivo: ${formData.objective}\n` : ''}\nAcesse o sistema para visualizar e iniciar o atendimento.`,
+        });
+      }
+    } catch (e) { console.error(e); }
   };
 
   const filtered = customers.filter(c => {
@@ -78,6 +89,8 @@ export default function Customers() {
           ))}
         </select>
       </div>
+
+      {!loading && <OverdueWidget customers={customers} />}
 
       {loading ? (
         <div className="text-center py-20 text-gray-400">Carregando...</div>
