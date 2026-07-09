@@ -59,17 +59,7 @@ export default function Customers() {
     await base44.entities.Customer.create(formData);
     setShowForm(false);
     loadCustomers();
-    try {
-      const settings = await base44.entities.Setting.filter({ key: 'team_email' });
-      if (settings.length > 0 && settings[0].value) {
-        await base44.integrations.Core.SendEmail({
-          to: settings[0].value,
-          from_name: 'Be Fitness',
-          subject: `Novo cliente: ${formData.name}`,
-          body: `Um novo cliente entrou na base da Be Fitness!\n\nNome: ${formData.name}\n${formData.phone ? `Telefone: ${formData.phone}\n` : ''}${formData.objective ? `Objetivo: ${formData.objective}\n` : ''}\nAcesse o sistema para visualizar e iniciar o atendimento.`,
-        });
-      }
-    } catch (e) { console.error(e); }
+
   };
 
   const now = new Date(); now.setHours(0, 0, 0, 0);
