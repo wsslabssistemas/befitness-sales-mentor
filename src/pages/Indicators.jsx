@@ -144,7 +144,7 @@ export default function Indicators() {
         {summaryResult && (
           <p className="text-sm mt-2 text-center">
             {summaryResult.sent
-              ? `✓ Resumo enviado! (${summaryResult.overdue} atrasado(s), ${summaryResult.today} para hoje, ${summaryResult.upcoming} na semana)`
+              ? `✓ Resumo enviado! (${summaryResult.overdue} atrasado(s), ${summaryResult.today} para hoje, ${summaryResult.newLeads} novo(s) lead(s), ${summaryResult.cooling} esfriando, ${summaryResult.recentMatriculas} matrícula(s) recente(s))`
               : summaryResult.reason === 'nothing'
                 ? 'Nada pendente para reportar hoje.'
                 : 'Erro ao enviar. Tente novamente.'}
