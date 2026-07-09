@@ -3,11 +3,11 @@ import { base44 } from '@/api/base44Client';
 import { RESULT_CONFIG, RESULT_TO_STATUS } from '@/lib/statusConfig';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Calendar } from 'lucide-react';
 
 const NEXT_ACTION_MAP = {
   respondeu: { action: 'Continuar conversa e descobrir necessidades', days: 2 },
-  marcou_visita: { action: 'Confirmar visita', days: 1 },
+  marcou_visita: { action: 'Visita agendada', days: 1 },
   semana_experimental: { action: 'Acompanhar experiência', days: 3 },
   matriculou: { action: 'Acompanhar primeiros treinos', days: 2 },
   nao_respondeu: { action: 'Retornar contato', days: 1 },
@@ -15,13 +15,14 @@ const NEXT_ACTION_MAP = {
 
 export default function InteractionCard({ interaction, onUpdated }) {
   const [updating, setUpdating] = useState(false);
+  const [pendingVisit, setPendingVisit] = useState(false);
+  const [visitDate, setVisitDate] = useState('');
   const cfg = RESULT_CONFIG[interaction.result] || RESULT_CONFIG.pendente;
   const date = interaction.created_date ? new Date(interaction.created_date) : null;
 
-  const handleResultChange = async (e) => {
-    const newResult = e.target.value;
-    if (newResult === interaction.result) return;
+  const doSave = async (newResult, customDate) => {
     setUpdating(true);
+    setPendingVisit(false);
     try {
       await base44.entities.Interaction.update(interaction.id, { result: newResult });
       const newStatus = RESULT_TO_STATUS[newResult];
@@ -29,8 +30,13 @@ export default function InteractionCard({ interaction, onUpdated }) {
         const updateData = { last_interaction_date: new Date().toISOString(), status: newStatus };
         const nextActionInfo = NEXT_ACTION_MAP[newResult];
         if (nextActionInfo) {
-          const d = new Date();
-          d.setDate(d.getDate() + nextActionInfo.days);
+          let d;
+          if (customDate) {
+            d = new Date(customDate + 'T12:00:00');
+          } else {
+            d = new Date();
+            d.setDate(d.getDate() + nextActionInfo.days);
+          }
           updateData.next_action = nextActionInfo.action;
           updateData.next_action_date = d.toISOString().split('T')[0];
         }
@@ -45,6 +51,21 @@ export default function InteractionCard({ interaction, onUpdated }) {
     }
   };
 
+  const handleResultChange = (e) => {
+    const newResult = e.target.value;
+    if (newResult === interaction.result) return;
+    if (newResult === 'marcou_visita') {
+      setPendingVisit(true);
+      return;
+    }
+    doSave(newResult);
+  };
+
+  const handleVisitConfirm = () => {
+    if (!visitDate) return;
+    doSave('marcou_visita', visitDate);
+  };
+
   return (
     <div className="bg-white rounded-xl border border-gray-100 p-5">
       <div className="flex items-center justify-between mb-3 gap-2">
@@ -57,7 +78,7 @@ export default function InteractionCard({ interaction, onUpdated }) {
           <select
             value={interaction.result}
             onChange={handleResultChange}
-            disabled={updating}
+            disabled={updating || pendingVisit}
             className={`text-xs px-2.5 py-1 rounded-full border cursor-pointer font-medium ${cfg.badge} disabled:opacity-50`}
             title="Editar status do atendimento"
           >
@@ -67,6 +88,35 @@ export default function InteractionCard({ interaction, onUpdated }) {
           </select>
         </div>
       </div>
+      {pendingVisit && (
+        <div className="mb-3 bg-orange-50/50 rounded-lg p-3">
+          <p className="text-xs text-gray-600 mb-2 flex items-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5 text-orange-600" /> Para qual dia agendou a visita?
+          </p>
+          <div className="flex gap-2 flex-wrap">
+            <input
+              type="date"
+              value={visitDate}
+              onChange={e => setVisitDate(e.target.value)}
+              className="px-2.5 py-1.5 rounded-lg border border-gray-200 text-sm flex-1 min-w-[140px]"
+              autoFocus
+            />
+            <button
+              onClick={handleVisitConfirm}
+              disabled={!visitDate}
+              className="px-3 py-1.5 rounded-lg bg-orange-500 text-white text-xs font-medium hover:bg-orange-600 disabled:opacity-50"
+            >
+              Confirmar
+            </button>
+            <button
+              onClick={() => { setPendingVisit(false); setVisitDate(''); }}
+              className="px-2 py-1.5 text-xs text-gray-400 hover:text-gray-600"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
       {interaction.conversation && (
         <div className="mb-3">
           <p className="text-xs text-gray-400 mb-1">Conversa do cliente</p>

@@ -1,9 +1,21 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Copy, Check, Target, Lightbulb, ArrowRight, Brain, Heart, TrendingUp, Crosshair } from 'lucide-react';
+import { Copy, Check, Target, Lightbulb, ArrowRight, Brain, Heart, TrendingUp, Crosshair, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RESULT_CONFIG } from '@/lib/statusConfig';
 
 export default function AttendanceResult({ analysis, copied, onCopy, onSaveResult, hasCustomer }) {
+  const [pendingVisit, setPendingVisit] = useState(false);
+  const [visitDate, setVisitDate] = useState('');
+
+  const handleResultClick = (key) => {
+    if (key === 'marcou_visita') {
+      setPendingVisit(true);
+    } else {
+      onSaveResult(key);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -87,17 +99,44 @@ export default function AttendanceResult({ analysis, copied, onCopy, onSaveResul
       {hasCustomer && (
         <div className="bg-white rounded-xl border border-gray-100 p-5">
           <p className="text-sm font-semibold text-gray-700 mb-3">Registrar Resultado do Atendimento</p>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-            {Object.entries(RESULT_CONFIG).filter(([k]) => k !== 'pendente').map(([key, cfg]) => (
-              <button
-                key={key}
-                onClick={() => onSaveResult(key)}
-                className={`text-xs px-3 py-2 rounded-lg border transition-all hover:scale-105 ${cfg.badge}`}
-              >
-                {cfg.label}
-              </button>
-            ))}
-          </div>
+          {pendingVisit ? (
+            <div className="bg-orange-50/50 rounded-lg p-4">
+              <p className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-1.5">
+                <Calendar className="w-4 h-4 text-orange-600" /> Para qual dia agendou a visita?
+              </p>
+              <div className="flex gap-2 flex-wrap">
+                <input
+                  type="date"
+                  value={visitDate}
+                  onChange={e => setVisitDate(e.target.value)}
+                  className="px-3 py-2 rounded-lg border border-gray-200 text-sm flex-1 min-w-[150px]"
+                  autoFocus
+                />
+                <Button
+                  className="bg-orange-500 hover:bg-orange-600"
+                  disabled={!visitDate}
+                  onClick={() => { onSaveResult('marcou_visita', visitDate); setPendingVisit(false); setVisitDate(''); }}
+                >
+                  Confirmar
+                </Button>
+                <Button variant="outline" onClick={() => { setPendingVisit(false); setVisitDate(''); }}>
+                  Cancelar
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              {Object.entries(RESULT_CONFIG).filter(([k]) => k !== 'pendente').map(([key, cfg]) => (
+                <button
+                  key={key}
+                  onClick={() => handleResultClick(key)}
+                  className={`text-xs px-3 py-2 rounded-lg border transition-all hover:scale-105 ${cfg.badge}`}
+                >
+                  {cfg.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </motion.div>

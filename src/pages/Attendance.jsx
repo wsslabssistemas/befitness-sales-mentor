@@ -287,7 +287,7 @@ Analise esta conversa e gere a melhor resposta para enviar ao cliente agora.`;
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleSaveResult = async (result) => {
+  const handleSaveResult = async (result, visitDate) => {
     if (!selectedCustomer) {
       alert('Selecione um cliente para registrar o resultado.');
       return;
@@ -313,15 +313,20 @@ Analise esta conversa e gere a melhor resposta para enviar ao cliente agora.`;
       if (newStatus) updateData.status = newStatus;
       const NEXT_ACTION_MAP = {
         respondeu: { action: 'Continuar conversa e descobrir necessidades', days: 2 },
-        marcou_visita: { action: 'Confirmar visita', days: 1 },
+        marcou_visita: { action: 'Visita agendada', days: 1 },
         semana_experimental: { action: 'Acompanhar experiência', days: 3 },
         matriculou: { action: 'Acompanhar primeiros treinos', days: 2 },
         nao_respondeu: { action: 'Retornar contato', days: 1 },
       };
       const nextActionInfo = NEXT_ACTION_MAP[result];
       if (nextActionInfo) {
-        const date = new Date();
-        date.setDate(date.getDate() + nextActionInfo.days);
+        let date;
+        if (result === 'marcou_visita' && visitDate) {
+          date = new Date(visitDate + 'T12:00:00');
+        } else {
+          date = new Date();
+          date.setDate(date.getDate() + nextActionInfo.days);
+        }
         updateData.next_action = nextActionInfo.action;
         updateData.next_action_date = date.toISOString().split('T')[0];
       }
