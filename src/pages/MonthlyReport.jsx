@@ -59,6 +59,28 @@ export default function MonthlyReport() {
 
   if (loading) return <div className="p-8 text-center text-gray-400">Carregando...</div>;
 
+  const handleDeleteSeller = async (name) => {
+    try {
+      await base44.entities.Interaction.updateMany(
+        { handled_by: name },
+        { $set: { handled_by: '' } }
+      );
+      await base44.entities.Customer.updateMany(
+        { assigned_to: name },
+        { $set: { assigned_to: '' } }
+      );
+      const [ints, custs] = await Promise.all([
+        base44.entities.Interaction.list('-created_date', 500),
+        base44.entities.Customer.list('-created_date', 500),
+      ]);
+      setInteractions(ints);
+      setCustomers(custs);
+    } catch (e) {
+      console.error(e);
+      alert('Erro ao remover. Tente novamente.');
+    }
+  };
+
   const metrics = [
     { label: 'Novos Leads', value: newLeads, icon: UserPlus, color: 'bg-blue-500' },
     { label: 'Atendimentos', value: totalAtend, icon: MessageSquare, color: 'bg-cyan-500' },
@@ -118,7 +140,7 @@ export default function MonthlyReport() {
       <SalesFunnel customers={monthCustomers} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        <SellerReport interactions={monthInteractions} customers={monthCustomers} />
+        <SellerReport interactions={monthInteractions} customers={monthCustomers} onDelete={handleDeleteSeller} />
         <ResponseTime customers={monthCustomers} interactions={interactions} />
       </div>
 
