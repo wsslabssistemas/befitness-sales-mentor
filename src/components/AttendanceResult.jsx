@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Copy, Check, Target, Lightbulb, ArrowRight, Brain, Heart, TrendingUp } from 'lucide-react';
+import { Copy, Check, Target, Lightbulb, ArrowRight, Brain, Heart, TrendingUp, Crosshair } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RESULT_CONFIG } from '@/lib/statusConfig';
 
@@ -49,6 +49,20 @@ export default function AttendanceResult({ analysis, copied, onCopy, onSaveResul
         <div className="bg-blue-50/40 rounded-xl border border-blue-100 p-4">
           <p className="text-xs text-blue-600 flex items-center gap-1 mb-1"><Lightbulb className="w-3 h-3" /> Por que esta resposta?</p>
           <p className="text-sm text-gray-700 leading-relaxed">{analysis.explicacao}</p>
+        </div>
+      )}
+
+      {(analysis.tecnica_selecionada || analysis.motivo_selecao) && (
+        <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl border border-purple-100 p-4">
+          {analysis.tecnica_selecionada && (
+            <>
+              <p className="text-xs text-purple-600 flex items-center gap-1 mb-1"><Crosshair className="w-3 h-3" /> Técnica Selecionada</p>
+              <p className="text-sm font-semibold text-gray-800 mb-2">{analysis.tecnica_selecionada}</p>
+            </>
+          )}
+          {analysis.motivo_selecao && (
+            <p className="text-sm text-gray-600 leading-relaxed">{analysis.motivo_selecao}</p>
+          )}
         </div>
       )}
 
