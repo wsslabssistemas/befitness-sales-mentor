@@ -77,6 +77,29 @@ DIFERENCIAIS DA BE FITNESS:
 - Brinde de boas-vindas: aromatizador de carro personalizado durante a semana experimental
 - Plano anual: bolsa térmica personalizada + chaveiro da academia
 - Acompanhamento de professores durante todos os treinos
+- Estrutura completa: vestiário com chuveiro, armário rotativo e estacionamento
+
+PROMOÇÃO VALE-PRESENTE 15 DIAS:
+- Cliente que fechar o plano anual (parcelamento no cartão de crédito ou à vista) recebe um vale-presente de 15 dias para dar a um amigo que NÃO seja cliente da Be Fitness
+- O próprio cliente não pode usar os 15 dias para si mesmo
+- O brinde não é acumulativo: a pessoa indicada não pode acumular a semana experimental grátis + os 15 dias de cortesia
+- Prazo de 1 semana para retirar a cortesia, contado a partir da data de entrada do cliente que contratou o plano anual
+
+CONTATO E LOCALIZAÇÃO:
+- Endereço: Avenida Protásio Alves, 4780 - Porto Alegre
+- WhatsApp/Telefone: (51) 98251-2270
+- Instagram: @befitnesspoa
+- E-mail: befitnespoa@gmail.com
+
+CONVÊNIOS ACEITOS:
+- Totalpass: plano TP+
+- Gympass: plano Basic+
+
+PLANOS E VALORES:
+- Anual parcelado: 12x de R$ 99,00 (cartão de crédito)
+- Trimestral à vista: R$ 410,00
+- Semestral à vista: R$ 580,00
+- Anual à vista: R$ 958,80
 
 SERVIÇOS OFERECIDOS (modalidades próprias):
 Musculação, Ginástica, Pilates, Lutas, Dança, Circuito Funcional
