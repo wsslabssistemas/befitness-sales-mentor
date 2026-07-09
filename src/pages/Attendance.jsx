@@ -160,10 +160,15 @@ CONVÊNIOS ACEITOS:
 - Gympass: plano Basic+
 
 PLANOS E VALORES:
-- Anual parcelado: 12x de R$ 99,00 (cartão de crédito)
-- Trimestral à vista: R$ 410,00
-- Semestral à vista: R$ 580,00
-- Anual à vista: R$ 958,80
+PARCELADO (cartão de crédito):
+- Trimestral: 3x de R$ 149,00
+- Semestral: 6x de R$ 108,00
+- Anual: 12x de R$ 99,00
+À VISTA (com desconto):
+- Trimestral: R$ 410,00
+- Semestral: R$ 580,00
+- Anual: R$ 958,80
+Sempre apresente ambas as opções (parcelado e à vista) e destaque que o pagamento à vista tem mais desconto.
 
 SERVIÇOS OFERECIDOS (modalidades próprias):
 Musculação, Ginástica, Pilates, Lutas, Dança, Circuito Funcional
