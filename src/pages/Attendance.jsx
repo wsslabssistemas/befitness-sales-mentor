@@ -23,11 +23,19 @@ export default function Attendance() {
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [customerInteractions, setCustomerInteractions] = useState([]);
 
   useEffect(() => {
     base44.entities.Customer.list('-created_date', 200).then(setCustomers).catch(console.error);
     base44.entities.Vendor.filter({ status: 'ativo' }).then(setVendors).catch(console.error);
   }, []);
+
+  useEffect(() => {
+    if (!selectedCustomer) { setCustomerInteractions([]); return; }
+    base44.entities.Interaction.filter({ customer_id: selectedCustomer }, '-created_date', 20)
+      .then(setCustomerInteractions)
+      .catch(() => setCustomerInteractions([]));
+  }, [selectedCustomer]);
 
   const handleAnalyze = async () => {
     if (!conversation.trim()) return;
@@ -53,6 +61,18 @@ export default function Attendance() {
 
       const profileLabel = PROFILE_CONFIG[profile]?.label || 'Não identificado';
 
+      const historyText = customerInteractions.length > 0
+        ? 'HISTÓRICO DE ATENDIMENTOS ANTERIORES (respostas JÁ enviadas a este cliente — NÃO repita abordagens, técnicas ou perguntas já feitas. Evolua a conversa para o próximo passo lógico):\n' +
+          customerInteractions.map((inter, i) =>
+            `Atendimento ${customerInteractions.length - i}:\n` +
+            `Objetivo: ${inter.objective || 'N/A'}\n` +
+            `Técnicas usadas: ${inter.techniques || 'N/A'}\n` +
+            `Resposta enviada: ${inter.suggested_response || 'N/A'}\n` +
+            `Resultado: ${inter.result || 'pendente'}\n` +
+            `Próximo passo recomendado: ${inter.next_step || 'N/A'}`
+          ).join('\n---\n')
+        : 'Este é o primeiro atendimento deste cliente — não há histórico anterior.';
+
       const prompt = `Você é o Assistente Comercial Inteligente da academia Be Fitness. Sua missão é orientar o recepcionista durante o atendimento, sugerindo a melhor resposta para o cliente e explicando a técnica comercial utilizada.
 
 MÉTODO COMERCIAL - 7 PILARES (Fundação):
@@ -70,6 +90,7 @@ SELEÇÃO INTELIGENTE — Antes de responder, analise e ESCOLHA a melhor técnic
 1. Qual é a dúvida REAL do cliente? (preço, confiança, procrastinação, objeção múltipla?)
 2. Em que etapa da jornada ele está?
 3. Qual técnica responde DIRETAMENTE a essa dúvida?
+4. Verifique o HISTÓRICO de atendimentos anteriores: quais técnicas e perguntas JÁ foram usadas? NÃO repita a mesma abordagem. Evolua a conversa para o próximo passo lógico da jornada.
 Sempre indique no campo tecnica_selecionada qual técnica escolheu e por quê (motivo_selecao).
 
 A) OBJEÇÃO DE PREÇO:
@@ -210,6 +231,8 @@ BIBLIOTECA COMERCIAL (use como base de conhecimento):
 ${libraryText}
 
 PERFIL DO CLIENTE: ${profileLabel}
+
+${historyText}
 
 CONVERSA DO WHATSAPP (o cliente escreveu):
 ${conversation}
