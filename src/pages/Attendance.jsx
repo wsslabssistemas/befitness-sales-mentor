@@ -191,16 +191,31 @@ CONVÊNIOS ACEITOS:
 - Totalpass: plano TP+
 - Gympass: plano Basic+
 
-PLANOS E VALORES:
-PARCELADO (cartão de crédito):
-- Trimestral: 3x de R$ 149,00
-- Semestral: 6x de R$ 108,00
-- Anual: 12x de R$ 99,00
-À VISTA (com desconto):
+PLANOS E VALORES — 3 FORMAS DE PAGAMENTO:
+
+1. À VISTA (com desconto — menor preço, não usa cartão):
 - Trimestral: R$ 410,00
 - Semestral: R$ 580,00
 - Anual: R$ 958,80
-Sempre apresente ambas as opções (parcelado e à vista) e destaque que o pagamento à vista tem mais desconto.
+
+2. PARCELADO NO CARTÃO DE CRÉDITO (USA o limite do cartão):
+- Trimestral: 3x de R$ 149,00
+- Semestral: 6x de R$ 108,00
+- Anual: 12x de R$ 99,00
+IMPORTANTE: o parcelamento no cartão de crédito ocupa o limite do cartão do cliente. Sempre informe isso.
+
+3. PLANO ANUAL RECORRENTE (NÃO USA o limite do cartão — é assinatura mensal):
+- Adesão: R$ 59,00
+- Mensalidade: R$ 109,00/mês
+- Cobrança: 1x de R$ 168,00 (adesão + 1ª mensalidade) + 11x de R$ 109,00
+- É uma assinatura recorrente: não bloqueia o limite do cartão pois a cobrança é mensal automática (débito no cartão mês a mês, não parcelamento).
+
+REGRAS DE APRESENTAÇÃO DE VALORES:
+- Sempre apresente todas as 3 opções quando falar de valores.
+- Destaque o pagamento à vista como a opção mais econômica (maior desconto).
+- O plano anual recorrente é ideal para quem quer pagar mensal sem comprometer o limite do cartão.
+- O parcelado no cartão USA o limite — sempre informe isso ao cliente, NUNCA diga que não usa.
+- Apenas o plano anual recorrente não usa o limite do cartão.
 
 SERVIÇOS OFERECIDOS (modalidades próprias):
 Musculação, Ginástica, Pilates, Lutas, Dança, Circuito Funcional

@@ -89,7 +89,7 @@ export default function CustomerDetail() {
         </div>
       ) : (
         <div className="space-y-3">
-          {interactions.map(i => <InteractionCard key={i.id} interaction={i} />)}
+          {interactions.map(i => <InteractionCard key={i.id} interaction={i} onUpdated={loadData} />)}
         </div>
       )}
 

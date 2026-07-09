@@ -123,6 +123,7 @@ export async function sendDailySummary(teamEmail) {
 
   await base44.integrations.Core.SendEmail({
     to: teamEmail,
+    from_name: 'Be Fitness',
     subject: `📋 Resumo Diário Be Fitness — ${todayDate.toLocaleDateString('pt-BR')} (${overdue.length} atrasado(s), ${todayActions.length} para hoje, ${newLeadsNoInteraction.length} novo(s) lead(s))`,
     body,
   });

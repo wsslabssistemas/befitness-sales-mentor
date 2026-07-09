@@ -38,8 +38,14 @@ export default function Customers() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [showForm, setShowForm] = useState(false);
   const [attentionToday, setAttentionToday] = useState(false);
+  const [filterVendor, setFilterVendor] = useState('all');
+  const [sortBy, setSortBy] = useState('urgency');
+  const [vendors, setVendors] = useState([]);
 
-  useEffect(() => { loadCustomers(); }, []);
+  useEffect(() => {
+    loadCustomers();
+    base44.entities.Vendor.filter({ status: 'ativo' }).then(setVendors).catch(console.error);
+  }, []);
 
   const loadCustomers = async () => {
     try {
@@ -58,6 +64,7 @@ export default function Customers() {
       if (settings.length > 0 && settings[0].value) {
         await base44.integrations.Core.SendEmail({
           to: settings[0].value,
+          from_name: 'Be Fitness',
           subject: `Novo cliente: ${formData.name}`,
           body: `Um novo cliente entrou na base da Be Fitness!\n\nNome: ${formData.name}\n${formData.phone ? `Telefone: ${formData.phone}\n` : ''}${formData.objective ? `Objetivo: ${formData.objective}\n` : ''}\nAcesse o sistema para visualizar e iniciar o atendimento.`,
         });
@@ -70,11 +77,20 @@ export default function Customers() {
   const filtered = customers.filter(c => {
     const matchesSearch = !search || c.name?.toLowerCase().includes(search.toLowerCase()) || c.phone?.includes(search);
     const matchesStatus = filterStatus === 'all' || c.status === filterStatus;
+    const matchesVendor = filterVendor === 'all' || c.assigned_to === filterVendor;
     const matchesAttention = !attentionToday || (c.status !== 'matriculado' && c.status !== 'perdido' && c.next_action_date && new Date(c.next_action_date) <= now);
-    return matchesSearch && matchesStatus && matchesAttention;
+    return matchesSearch && matchesStatus && matchesVendor && matchesAttention;
   });
 
-  const sorted = sortByUrgency(filtered);
+  const sorted = sortBy === 'urgency' ? sortByUrgency(filtered)
+    : sortBy === 'name' ? [...filtered].sort((a, b) => (a.name || '').localeCompare(b.name || ''))
+    : sortBy === 'created' ? [...filtered].sort((a, b) => new Date(b.created_date || 0) - new Date(a.created_date || 0))
+    : sortBy === 'interaction' ? [...filtered].sort((a, b) => {
+        const da = a.last_interaction_date ? new Date(a.last_interaction_date) : new Date(a.created_date || 0);
+        const db = b.last_interaction_date ? new Date(b.last_interaction_date) : new Date(b.created_date || 0);
+        return da - db;
+      })
+    : filtered;
 
   return (
     <div className="p-6 md:p-8 max-w-5xl mx-auto">
@@ -88,8 +104,8 @@ export default function Customers() {
         </Button>
       </div>
 
-      <div className="flex gap-3 mb-6">
-        <div className="relative flex-1">
+      <div className="flex gap-3 mb-6 flex-wrap">
+        <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar por nome ou telefone..." className="pl-9" />
         </div>
@@ -99,6 +115,18 @@ export default function Customers() {
             <option key={key} value={key}>{cfg.label}</option>
           ))}
         </select>
+        <select value={filterVendor} onChange={e => setFilterVendor(e.target.value)} className="px-3 py-2 rounded-lg border border-gray-200 text-sm bg-white">
+          <option value="all">Todos responsáveis</option>
+          {vendors.map(v => (
+            <option key={v.id} value={v.name}>{v.name}</option>
+          ))}
+        </select>
+        <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="px-3 py-2 rounded-lg border border-gray-200 text-sm bg-white">
+          <option value="urgency">Ordenar: Urgência</option>
+          <option value="name">Ordenar: Nome A-Z</option>
+          <option value="created">Ordenar: Cadastro recente</option>
+          <option value="interaction">Ordenar: Última interação</option>
+        </select>
         <button
           onClick={() => setAttentionToday(!attentionToday)}
           className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-1.5 flex-shrink-0 ${
@@ -106,7 +134,7 @@ export default function Customers() {
           }`}
         >
           <AlertCircle className="w-4 h-4" />
-          Atenção Hoje
+          <span className="hidden lg:inline">Atenção Hoje</span>
         </button>
       </div>
 
