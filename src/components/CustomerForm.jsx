@@ -7,10 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { STATUS_CONFIG, PROFILE_CONFIG } from '@/lib/statusConfig';
 import { base44 } from '@/api/base44Client';
+import { Trash2 } from 'lucide-react';
 
 const LEAD_SOURCES = ['Instagram', 'Facebook', 'WhatsApp', 'Telefone', 'Presencial', 'Indicação'];
 
-export default function CustomerForm({ customer, onSave, onClose }) {
+export default function CustomerForm({ customer, onSave, onClose, onDelete }) {
   const [vendors, setVendors] = useState([]);
 
   useEffect(() => {
@@ -136,6 +137,13 @@ export default function CustomerForm({ customer, onSave, onClose }) {
             <Textarea value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} rows={3} />
           </div>
           <DialogFooter>
+            {customer && onDelete && (
+              <Button type="button" variant="destructive" onClick={() => {
+                if (confirm(`Excluir o cliente "${customer.name}" e todo o histórico de atendimentos?`)) onDelete(customer);
+              }} className="mr-auto">
+                <Trash2 className="w-4 h-4 mr-1.5" /> Excluir
+              </Button>
+            )}
             <Button type="button" variant="outline" onClick={onClose}>Cancelar</Button>
             <Button type="submit" className="bg-orange-500 hover:bg-orange-600">Salvar</Button>
           </DialogFooter>

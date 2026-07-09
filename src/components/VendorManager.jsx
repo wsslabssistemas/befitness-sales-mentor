@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Users, UserPlus } from 'lucide-react';
+import { Users, UserPlus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -29,6 +29,12 @@ export default function VendorManager() {
     load();
   };
 
+  const handleDelete = async (v) => {
+    if (!confirm(`Excluir o vendedor "${v.name}"?`)) return;
+    await base44.entities.Vendor.delete(v.id);
+    load();
+  };
+
   const active = vendors.filter(v => v.status === 'ativo');
   const inactive = vendors.filter(v => v.status === 'inativo');
 
@@ -53,7 +59,12 @@ export default function VendorManager() {
               <span className="w-2 h-2 rounded-full bg-green-500" />
               <span className="text-sm font-medium text-gray-700">{v.name}</span>
             </div>
-            <button onClick={() => toggleStatus(v)} className="text-xs text-gray-400 hover:text-red-500 transition-colors">Inativar</button>
+            <div className="flex items-center gap-3">
+              <button onClick={() => toggleStatus(v)} className="text-xs text-gray-400 hover:text-red-500 transition-colors">Inativar</button>
+              <button onClick={() => handleDelete(v)} className="text-gray-300 hover:text-red-500 transition-colors" title="Excluir">
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         ))}
         {inactive.map(v => (
@@ -62,7 +73,12 @@ export default function VendorManager() {
               <span className="w-2 h-2 rounded-full bg-gray-400" />
               <span className="text-sm text-gray-500">{v.name}</span>
             </div>
-            <button onClick={() => toggleStatus(v)} className="text-xs text-gray-400 hover:text-green-600 transition-colors">Reativivar</button>
+            <div className="flex items-center gap-3">
+              <button onClick={() => toggleStatus(v)} className="text-xs text-gray-400 hover:text-green-600 transition-colors">Reativivar</button>
+              <button onClick={() => handleDelete(v)} className="text-gray-300 hover:text-red-500 transition-colors" title="Excluir">
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         ))}
         {vendors.length === 0 && (

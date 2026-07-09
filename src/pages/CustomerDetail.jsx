@@ -36,6 +36,12 @@ export default function CustomerDetail() {
     loadData();
   };
 
+  const handleDelete = async () => {
+    await base44.entities.Interaction.deleteMany({ customer_id: id });
+    await base44.entities.Customer.delete(id);
+    navigate('/');
+  };
+
   if (loading) return <div className="p-8 text-center text-gray-400">Carregando...</div>;
   if (!customer) return <div className="p-8 text-center text-gray-400">Cliente não encontrado</div>;
 
@@ -87,7 +93,7 @@ export default function CustomerDetail() {
         </div>
       )}
 
-      {showEdit && <CustomerForm customer={customer} onSave={handleUpdate} onClose={() => setShowEdit(false)} />}
+      {showEdit && <CustomerForm customer={customer} onSave={handleUpdate} onClose={() => setShowEdit(false)} onDelete={handleDelete} />}
     </div>
   );
 }
