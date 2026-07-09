@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { Users, MessageSquare, BookOpen, BarChart3 } from 'lucide-react';
+import { Users, MessageSquare, BookOpen, BarChart3, FileText } from 'lucide-react';
 
 const LOGO_URL = 'https://media.base44.com/images/public/6a4e5171867839bd68b9280e/632f9e5d1_WhatsAppImage2026-07-08at123414.jpeg';
 
@@ -10,6 +10,7 @@ const navItems = [
   { to: '/atendimento', label: 'Atendimento', icon: MessageSquare, end: false },
   { to: '/biblioteca', label: 'Biblioteca', icon: BookOpen, end: false },
   { to: '/indicadores', label: 'Indicadores', icon: BarChart3, end: false },
+  { to: '/relatorio-mensal', label: 'Relatório Mensal', icon: FileText, end: false },
 ];
 
 export default function Sidebar() {

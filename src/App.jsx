@@ -13,6 +13,7 @@ import CustomerDetail from '@/pages/CustomerDetail';
 import Attendance from '@/pages/Attendance';
 import Library from '@/pages/Library';
 import Indicators from '@/pages/Indicators';
+import MonthlyReport from '@/pages/MonthlyReport';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -46,6 +47,7 @@ const AuthenticatedApp = () => {
         <Route path="/atendimento" element={<Attendance />} />
         <Route path="/biblioteca" element={<Library />} />
         <Route path="/indicadores" element={<Indicators />} />
+        <Route path="/relatorio-mensal" element={<MonthlyReport />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
