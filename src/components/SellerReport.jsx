@@ -1,6 +1,6 @@
-import { Users, Trophy } from 'lucide-react';
+import { Users, Trophy, Trash2 } from 'lucide-react';
 
-export default function SellerReport({ interactions, customers }) {
+export default function SellerReport({ interactions, customers, onDelete }) {
   const sellers = {};
   const get = (name) => {
     if (!sellers[name]) sellers[name] = { name, interactions: 0, matriculas: 0, visitas: 0, experimentais: 0, assigned: 0, overdue: 0 };
@@ -41,7 +41,18 @@ export default function SellerReport({ interactions, customers }) {
           {list.map(s => {
             const rate = s.interactions > 0 ? ((s.matriculas / s.interactions) * 100).toFixed(0) : 0;
             return (
-              <div key={s.name} className="flex items-center gap-4 p-3 rounded-xl bg-gray-50">
+              <div key={s.name} className="flex items-center gap-4 p-3 rounded-xl bg-gray-50 group">
+                {onDelete && (
+                  <button
+                    onClick={() => {
+                      if (confirm(`Remover "${s.name}" do relatório de performance?\n\nOs atendimentos e clientes vinculados a este nome ficarão sem vendedor. O histórico dos clientes é mantido.`)) onDelete(s.name);
+                    }}
+                    className="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-500 transition-all flex-shrink-0"
+                    title="Remover do relatório"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-gray-900 truncate">{s.name}</p>
                   <div className="flex items-center gap-3 text-xs text-gray-500 mt-1 flex-wrap">

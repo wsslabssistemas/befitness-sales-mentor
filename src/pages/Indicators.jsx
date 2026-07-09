@@ -47,6 +47,28 @@ export default function Indicators() {
     } catch (e) { console.error(e); }
   };
 
+  const handleDeleteSeller = async (name) => {
+    try {
+      await base44.entities.Interaction.updateMany(
+        { handled_by: name },
+        { $set: { handled_by: '' } }
+      );
+      await base44.entities.Customer.updateMany(
+        { assigned_to: name },
+        { $set: { assigned_to: '' } }
+      );
+      const [ints, custs] = await Promise.all([
+        base44.entities.Interaction.list('-created_date', 500),
+        base44.entities.Customer.list('-created_date', 500),
+      ]);
+      setInteractions(ints);
+      setCustomers(custs);
+    } catch (e) {
+      console.error(e);
+      alert('Erro ao remover. Tente novamente.');
+    }
+  };
+
   const handleSendSummary = async () => {
     if (!teamEmail) return;
     setSendingSummary(true);
@@ -156,7 +178,7 @@ export default function Indicators() {
       <VendorManager />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        <SellerReport interactions={interactions} customers={customers} />
+        <SellerReport interactions={interactions} customers={customers} onDelete={handleDeleteSeller} />
         <LeadSourceReport customers={customers} />
       </div>
 
