@@ -167,6 +167,32 @@ export default function CustomerJourney({ customer, interactions, onSaved }) {
         </div>
       )}
 
+      {customer.status === 'matriculado' && journeyInfo.retentionInfo && journeyInfo.retentionInfo.milestones.some(m => m.due) && (
+        <div className="mt-4 bg-purple-50/30 rounded-xl p-3 border border-purple-100">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-medium text-gray-600">Acompanhamento de retenção</p>
+            <span className="text-xs text-gray-400">{journeyInfo.retentionInfo.daysEnrolled} dias</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            {journeyInfo.retentionInfo.milestones.map(m => (
+              <div key={m.day} className={`flex-1 text-center py-1.5 px-1 rounded-lg text-[11px] font-medium ${
+                m.done ? 'bg-green-100 text-green-700' :
+                m.due ? 'bg-orange-100 text-orange-700' :
+                'bg-gray-50 text-gray-400'
+              }`}>
+                {m.day}d
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {customer.status === 'matriculado' && !needEnrollmentDate && !msgStage && (
+        <div className="mt-4 bg-green-50/50 rounded-xl p-3 border border-green-100 text-center">
+          <p className="text-sm text-green-600 font-medium">✓ Tudo em dia! Nenhum acompanhamento necessário agora.</p>
+        </div>
+      )}
+
       {!needTrialDate && !needEnrollmentDate && msgStage && (
         <div className={`mt-5 rounded-xl p-4 border ${
           journeyInfo.isLost ? 'bg-gray-50 border-gray-200' : 'bg-orange-50/50 border-orange-100'

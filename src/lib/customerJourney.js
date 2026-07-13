@@ -34,6 +34,8 @@ const PLAN_DURATION_DAYS = {
   anual: 365,
 };
 
+const RETENTION_MILESTONES = [30, 45, 60, 90];
+
 export function getJourneyInfo(customer, interactions = []) {
   const level = STATUS_LEVEL[customer.status] ?? 0;
   const isLost = customer.status === 'perdido';
@@ -52,11 +54,17 @@ export function getJourneyInfo(customer, interactions = []) {
     trialInfo = getTrialInfo(customer.trial_start_date, interactions, customer.status);
   }
 
+  let retentionInfo = null;
+  if (customer.status === 'matriculado') {
+    retentionInfo = getRetentionInfo(customer, interactions);
+  }
+
   return {
     stages,
     currentStageId,
     isLost,
     trialInfo,
+    retentionInfo,
     guidance: STAGE_GUIDANCE[currentStageId] || STAGE_GUIDANCE.contato,
   };
 }
@@ -87,6 +95,55 @@ export function getRenewalAlert(customer) {
   return null;
 }
 
+export function getRetentionInfo(customer, interactions = []) {
+  if (customer.status !== 'matriculado' || !customer.enrollment_date) return null;
+
+  const start = new Date(customer.enrollment_date + 'T00:00:00');
+  start.setHours(0, 0, 0, 0);
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const daysEnrolled = Math.floor((now - start) / 86400000);
+
+  const hasInteractionOnOrAfter = (daysAfterStart) => {
+    const threshold = new Date(start);
+    threshold.setDate(threshold.getDate() + daysAfterStart);
+    return interactions.some(i => new Date(i.created_date) >= threshold);
+  };
+
+  const milestones = RETENTION_MILESTONES.map(m => ({
+    day: m,
+    due: daysEnrolled >= m,
+    done: daysEnrolled >= m && hasInteractionOnOrAfter(m - 5),
+  }));
+
+  const currentMilestone = milestones.find(m => m.due && !m.done);
+
+  return { daysEnrolled, milestones, currentMilestoneDay: currentMilestone?.day || null };
+}
+
+export function getRetentionAlert(customer) {
+  if (customer.status !== 'matriculado' || !customer.enrollment_date) return null;
+
+  const start = new Date(customer.enrollment_date + 'T00:00:00');
+  start.setHours(0, 0, 0, 0);
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const daysEnrolled = Math.floor((now - start) / 86400000);
+
+  const lastInt = customer.last_interaction_date ? new Date(customer.last_interaction_date) : null;
+
+  for (const m of RETENTION_MILESTONES) {
+    if (daysEnrolled >= m) {
+      const threshold = new Date(start);
+      threshold.setDate(threshold.getDate() + m - 5);
+      if (!lastInt || lastInt < threshold) {
+        return { milestone: m, daysEnrolled };
+      }
+    }
+  }
+  return null;
+}
+
 export function getMessageStage(customer, journeyInfo, renewalInfo) {
   const { currentStageId, trialInfo, isLost } = journeyInfo;
 
@@ -101,7 +158,11 @@ export function getMessageStage(customer, journeyInfo, renewalInfo) {
   if (currentStageId === 'matriculado') {
     if (!customer.enrollment_date) return null;
     if (renewalInfo && renewalInfo.daysUntilRenewal <= 30) return { stage: 'renovacao', label: 'Renovação' };
-    return { stage: 'posvenda', label: 'Pós-venda' };
+    if (journeyInfo.retentionInfo && journeyInfo.retentionInfo.currentMilestoneDay) {
+      return { stage: `retencao_${journeyInfo.retentionInfo.currentMilestoneDay}`, label: `Acompanhamento (${journeyInfo.retentionInfo.currentMilestoneDay} dias)` };
+    }
+    if (renewalInfo && renewalInfo.daysEnrolled <= 14) return { stage: 'posvenda', label: 'Pós-venda' };
+    return null;
   }
 
   if (customer.status === 'negociacao') return { stage: 'negociacao', label: 'Negociação' };
@@ -202,6 +263,43 @@ const STAGE_CONFIGS = {
 - Takeaway: "Lembrei de você quando abriu uma vaga..."
 - Loss Aversion: "Faz um tempo que não te vejo, não perca o ritmo"
 - Puppy Dog Close: ofereça semana experimental novamente`,
+  },
+  retencao_30: {
+    title: 'ACOMPANHAMENTO DE RETENÇÃO — 30 dias de matrícula',
+    goal: 'O aluno completou 30 dias. Faça o primeiro check-in de retenção: verifique satisfação, reforce o hábito e peça indicações.',
+    techniques: `TÉCNICAS A APLICAR:
+- Destroy Buyer Remorse (Girard): "Como está sendo sua experiência até agora?"
+- Habit Reinforcement: reforce que 30 dias é o marco — o hábito está se formando
+- Rehash for Referrals (Belfort): "Conhece alguém que gostaria de treinar aqui?"
+- Follow-up (Girard): mantenha contato genuíno, não apenas para vender`,
+  },
+  retencao_45: {
+    title: 'ACOMPANHAMENTO DE RETENÇÃO — 45 dias de matrícula',
+    goal: 'O aluno completou 45 dias. Reforce o progresso e mantenha o engajamento para prevenir desistência.',
+    techniques: `TÉCNICAS A APLICAR:
+- Future Pacing (Tracy): "Imagine daqui 3 meses com mais resultados"
+- Progress Reinforcement: reforce o que já conquistou em 45 dias
+- Rehash for Referrals (Belfort): peça indicações
+- Habit Lock-in: "Você já criou o hábito, não pare agora"`,
+  },
+  retencao_60: {
+    title: 'ACOMPANHAMENTO DE RETENÇÃO — 60 dias de matrícula',
+    goal: 'O aluno completou 60 dias. Faça um check-in de progresso e comece a preparar a conversa de renovação.',
+    techniques: `TÉCNICAS A APLICAR:
+- Value Realization (Hormozi): faça o cliente verbalizar os resultados
+- Progress Check: pergunte sobre mudanças físicas e de disposição
+- Rehash for Referrals (Belfort): peça indicações
+- Pre-renewal: "Daqui uns dias vamos conversar sobre sua renovação"`,
+  },
+  retencao_90: {
+    title: 'ACOMPANHAMENTO DE RETENÇÃO — 90 dias de matrícula',
+    goal: 'O aluno completou 90 dias. Celebre a conquista e prepare para a renovação.',
+    techniques: `TÉCNICAS A APLICAR:
+- Destroy Buyer Remorse (Girard): "3 meses! Fez a melhor escolha"
+- Future Pacing (Tracy): "Imagine daqui 6 meses..."
+- Loss Aversion (Kahneman): "Não perca o ritmo que conquistou"
+- Rehash for Referrals (Belfort): peça indicações
+- Renewal prep: prepare para a conversa de renovação`,
   },
 };
 

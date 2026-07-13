@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { getTrialAlert } from '@/lib/trialJourney';
-import { getRenewalAlert } from '@/lib/customerJourney';
+import { getRenewalAlert, getRetentionAlert } from '@/lib/customerJourney';
 import { AlertCircle } from 'lucide-react';
 
 const ALERT_STYLES = {
@@ -9,6 +9,7 @@ const ALERT_STYLES = {
   conversao: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700', label: 'Conversão pós-trial' },
   renewal: { bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700', label: 'Renovação próxima' },
   renewal_urgent: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700', label: 'Renovação urgente' },
+  retention: { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-700', label: 'Acompanhamento de retenção' },
 };
 
 export default function JourneyAlerts({ customers }) {
@@ -22,7 +23,12 @@ export default function JourneyAlerts({ customers }) {
     }
     const renewalAlert = getRenewalAlert(c);
     if (renewalAlert) {
-      alerts.push({ customer: c, type: renewalAlert.urgent ? 'renewal_urgent' : 'renewal', day: renewalAlert.daysUntilRenewal, isTrial: false });
+      alerts.push({ customer: c, type: renewalAlert.urgent ? 'renewal_urgent' : 'renewal', day: renewalAlert.daysUntilRenewal, isRenewal: true });
+      return;
+    }
+    const retentionAlert = getRetentionAlert(c);
+    if (retentionAlert) {
+      alerts.push({ customer: c, type: 'retention', day: retentionAlert.milestone, isRetention: true, daysEnrolled: retentionAlert.daysEnrolled });
     }
   });
 
@@ -40,7 +46,7 @@ export default function JourneyAlerts({ customers }) {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">{a.customer.name}</p>
                 <p className={`text-xs ${style.text}`}>
-                  {style.label} • {a.isTrial ? `Dia ${a.day} do trial` : a.day > 0 ? `${a.day} dias para renovar` : `Vencido há ${Math.abs(a.day)} dias`}
+                  {style.label} • {a.isTrial ? `Dia ${a.day} do trial` : a.isRenewal ? (a.day > 0 ? `${a.day} dias para renovar` : `Vencido há ${Math.abs(a.day)} dias`) : `Dia ${a.day} de matrícula`}
                 </p>
               </div>
               <span className="text-xs text-gray-400 flex-shrink-0">Enviar →</span>
