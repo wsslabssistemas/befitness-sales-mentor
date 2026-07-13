@@ -241,6 +241,7 @@ DIFERENCIAIS DA BE FITNESS:
 - Plano anual: bolsa térmica + chaveiro
 - Acompanhamento de professores em todos os treinos
 - Estrutura completa: vestiário, chuveiro, armário, estacionamento
+- FORMATO LIVRE: treino sem agendamento, sem horário fixo, sem reservas — o aluno vem no horário que quiser. NÃO existe sistema de vagas.
 
 HORÁRIO DE FUNCIONAMENTO:
 ${GYM_HOURS_TEXT}
@@ -315,17 +316,20 @@ const STAGE_CONFIGS = {
 - Law of 250 (Girard): peça indicações — "Conhece alguém que gostaria de treinar aqui?"
 - Loss Aversion (Kahneman): "Não perca o ritmo e os resultados que conquistou"
 - Loyalty: mostre que é valorizado como aluno
-- Se vencido: Takeaway Close (Tracy): "Sua vaga pode ser preenchida por outro aluno"`,
+- Se vencido: Takeaway Close (Tracy): "Não perca os resultados que já conquistou"`,
   },
   reativacao: {
-    title: 'REATIVAÇÃO — Cliente perdido',
-    goal: 'Reativar um cliente que desistiu ou esfriou. Gerar curiosidade e oferecer uma nova oportunidade.',
+    title: 'REATIVAÇÃO — Lead/cliente perdido',
+    goal: 'Reativar um lead que esfriou ou desistiu. Gerar curiosidade e oferecer uma nova oportunidade.',
     techniques: `TÉCNICAS A APLICAR:
 - Pattern Interrupt: quebre o padrão com uma abordagem diferente e humana
 - Curiosity Gap: "Temos uma novidade que pode te interessar..."
-- Takeaway: "Lembrei de você quando abriu uma vaga..."
-- Loss Aversion: "Faz um tempo que não te vejo, não perca o ritmo"
-- Puppy Dog Close: ofereça semana experimental novamente`,
+- Loss Aversion: "Faz um tempo, que tal aproveitar a semana free?"
+- Puppy Dog Close: ofereça a semana experimental
+
+IMPORTANTE:
+- A academia é FORMATO LIVRE — sem agendamento, sem horário fixo, sem vagas. NÃO mencione "vagas", "reservas" ou "abriu vaga".
+- Se o cliente NUNCA foi aluno, NÃO diga "voltar" ou "retornar" — aborde como primeira oportunidade.`,
   },
   retencao_30: {
     title: 'ACOMPANHAMENTO DE RETENÇÃO — 30 dias de matrícula',
@@ -365,34 +369,45 @@ const STAGE_CONFIGS = {
 - Renewal prep: prepare para a conversa de renovação`,
   },
   reativacao_90: {
-    title: 'REATIVAÇÃO — 3 meses desde a perda do cliente',
-    goal: 'O cliente foi para outra academia há 3 meses. Ofereça a semana free novamente com uma abordagem calorosa e sem pressão.',
+    title: 'REATIVAÇÃO — 3 meses desde a perda do lead/cliente',
+    goal: 'O lead esfriou ou foi para outra academia há 3 meses. Ofereça a semana free com uma abordagem calorosa e sem pressão.',
     techniques: `TÉCNICAS A APLICAR:
-- Puppy Dog Close (Brian Tracy): "Temos uma semana free pra você voltar e sentir a diferença"
+- Puppy Dog Close (Brian Tracy): "Temos uma semana free pra você conhecer e sentir a diferença"
 - Pattern Interrupt: quebre o padrão — não seja comercial, seja humano e genuíno
-- "We miss you": mostre que o cliente é valorizado e que sentiram a falta dele
 - Curiosity Gap: "Fizemos algumas mudanças que acho que vão te surpreender"
-- Sem pressão: não cobre a saída, apenas reabra a porta`,
+- Sem pressão: não cobre a saída, apenas reabra a porta
+
+IMPORTANTE:
+- A academia é FORMATO LIVRE — sem agendamento, sem horário fixo, sem vagas. NÃO mencione "vagas", "reservas" ou "abriu vaga".
+- Se o cliente NUNCA foi aluno, NÃO diga "voltar" ou "retornar" — aborde como primeira oportunidade.`,
   },
   reativacao_180: {
-    title: 'REATIVAÇÃO — 6 meses desde a perda do cliente',
-    goal: 'O cliente está há 6 meses em outra academia. Ofereça uma promoção específica de retorno e mostre as novidades.',
+    title: 'REATIVAÇÃO — 6 meses desde a perda do lead/cliente',
+    goal: 'O lead/cliente está há 6 meses sem contato. Ofereça uma promoção específica e mostre as novidades.',
     techniques: `TÉCNICAS A APLICAR:
 - Grand Slam Offer (Hormozi): semana free + brinde + isenção de matrícula
 - Curiosity Gap: "Muita coisa mudou em 6 meses, vem conhecer"
-- Loss Aversion: "Você já investiu tempo aqui, não deixe de aproveitar"
-- Takeaway: "A promoção de retorno é por tempo limitado"
-- Social proof: "Vários alunos que voltaram estão adorando as novidades"`,
+- Loss Aversion: "Não perca a oportunidade de treinar na Be Fitness"
+- Takeaway: "A promoção é por tempo limitado"
+- Social proof: "Vários alunos estão adorando as novidades"
+
+IMPORTANTE:
+- A academia é FORMATO LIVRE — sem agendamento, sem horário fixo, sem vagas. NÃO mencione "vagas", "reservas" ou "abriu vaga".
+- Se o cliente NUNCA foi aluno, NÃO diga "voltar" ou "retornar" — aborde como primeira oportunidade.`,
   },
   reativacao_365: {
-    title: 'REATIVAÇÃO — 1 ano desde a perda do cliente',
-    goal: 'O cliente está há 1 ano em outra academia. Faça uma oferta especial de aniversário e reabra o relacionamento.',
+    title: 'REATIVAÇÃO — 1 ano desde a perda do lead/cliente',
+    goal: 'O lead/cliente está há 1 ano sem contato. Faça uma oferta especial de aniversário e reabra o relacionamento.',
     techniques: `TÉCNICAS A APLICAR:
 - Pattern Interrupt: "Faz um ano! Lembrei de você e não pude deixar de mandar mensagem"
 - Grand Slam Offer (Hormozi): semana free + brinde + isenção + plano com desconto
-- Future Pacing (Tracy): "Imagina daqui 3 meses de volta na Be Fitness"
+- Future Pacing (Tracy): "Imagina daqui 3 meses treinar na Be Fitness"
 - Takeaway: "A oferta de aniversário é válida só este mês"
-- Reopen relationship: não venda, apenas reconecte`,
+- Reopen relationship: não venda, apenas reconecte
+
+IMPORTANTE:
+- A academia é FORMATO LIVRE — sem agendamento, sem horário fixo, sem vagas. NÃO mencione "vagas", "reservas" ou "abriu vaga".
+- Se o cliente NUNCA foi aluno, NÃO diga "voltar" ou "retornar" — aborde como primeira oportunidade.`,
   },
 };
 
@@ -430,6 +445,11 @@ DADOS DO CLIENTE:
 Nome: ${customer.name}
 Perfil: ${profileLabel}
 Objetivo: ${customer.objective || 'Não informado'}
+${customer.enrollment_date ? `Ex-aluno matriculado em: ${customer.enrollment_date.split('T')[0]}` : 'NUNCA foi aluno — era um lead que não converteu em matrícula'}
+
+${customer.enrollment_date
+  ? 'IMPORTANTE: Este cliente JÁ foi aluno da Be Fitness — pode referenciar a experiência anterior, mas SEM assumir horários específicos (a academia é formato livre, sem horário fixo).'
+  : 'IMPORTANTE: Este cliente NUNCA foi aluno da Be Fitness — era um lead que não converteu. NÃO diga "voltar", "retornar", "sentir novamente", "retomar o ritmo" ou referencie treinos passados. Aborde como uma PRIMEIRA oportunidade de conhecer a academia.'}
 
 Gere a melhor mensagem agora.`;
 }
