@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom';
+import InstallPWABanner from '@/components/InstallPWABanner';
 import Sidebar from './Sidebar';
 import NotificationProvider from './NotificationProvider';
 
@@ -12,6 +13,7 @@ export default function Layout() {
           <Outlet />
         </main>
       </div>
+      <InstallPWABanner />
     </>
   );
 }
