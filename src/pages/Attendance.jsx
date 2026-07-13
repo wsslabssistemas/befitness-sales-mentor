@@ -325,10 +325,13 @@ Analise esta conversa e gere a melhor resposta para enviar ao cliente agora.`;
       const newStatus = RESULT_TO_STATUS[result];
       const updateData = { last_interaction_date: new Date().toISOString() };
       if (newStatus) updateData.status = newStatus;
+      if (result === 'semana_experimental') {
+        updateData.trial_start_date = new Date().toISOString().split('T')[0];
+      }
       const NEXT_ACTION_MAP = {
         respondeu: { action: 'Continuar conversa e descobrir necessidades', days: 2 },
         marcou_visita: { action: 'Visita agendada', days: 1 },
-        semana_experimental: { action: 'Acompanhar experiência', days: 3 },
+        semana_experimental: { action: 'Acompanhamento do trial (Dia 2)', days: 2 },
         matriculou: { action: 'Acompanhar primeiros treinos', days: 2 },
         nao_respondeu: { action: 'Retornar contato', days: 1 },
       };

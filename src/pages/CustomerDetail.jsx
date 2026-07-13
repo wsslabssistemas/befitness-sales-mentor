@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import StatusBadge from '@/components/StatusBadge';
 import CustomerForm from '@/components/CustomerForm';
 import InteractionCard from '@/components/InteractionCard';
+import TrialJourney from '@/components/TrialJourney';
 import { PROFILE_CONFIG } from '@/lib/statusConfig';
 
 export default function CustomerDetail() {
@@ -77,9 +78,14 @@ export default function CustomerDetail() {
           {customer.objective && <div><p className="text-xs text-gray-400 mb-0.5">Objetivo</p><p className="text-sm font-medium">{customer.objective}</p></div>}
           {customer.assigned_to && <div><p className="text-xs text-gray-400 mb-0.5">Responsável</p><p className="text-sm font-medium">{customer.assigned_to}</p></div>}
           {customer.next_action && <div><p className="text-xs text-gray-400 mb-0.5">Próxima Ação</p><p className="text-sm font-medium text-orange-600">{customer.next_action}</p></div>}
+          {customer.trial_start_date && <div><p className="text-xs text-gray-400 mb-0.5">Início do Trial</p><p className="text-sm font-medium">{new Date(customer.trial_start_date).toLocaleDateString('pt-BR')}</p></div>}
         </div>
         {customer.notes && <p className="text-sm text-gray-600 mt-4 pt-4 border-t border-gray-50">{customer.notes}</p>}
       </div>
+
+      {(customer.status === 'semana_experimental' || customer.trial_start_date) && (
+        <TrialJourney customer={customer} interactions={interactions} onSaved={loadData} />
+      )}
 
       <h2 className="text-lg font-semibold text-gray-900 mb-4">Histórico de Atendimentos</h2>
       {interactions.length === 0 ? (

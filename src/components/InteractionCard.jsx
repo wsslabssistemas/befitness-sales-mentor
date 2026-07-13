@@ -8,7 +8,7 @@ import { Loader2, Calendar } from 'lucide-react';
 const NEXT_ACTION_MAP = {
   respondeu: { action: 'Continuar conversa e descobrir necessidades', days: 2 },
   marcou_visita: { action: 'Visita agendada', days: 1 },
-  semana_experimental: { action: 'Acompanhar experiência', days: 3 },
+  semana_experimental: { action: 'Acompanhamento do trial (Dia 2)', days: 2 },
   matriculou: { action: 'Acompanhar primeiros treinos', days: 2 },
   nao_respondeu: { action: 'Retornar contato', days: 1 },
 };
@@ -28,6 +28,9 @@ export default function InteractionCard({ interaction, onUpdated }) {
       const newStatus = RESULT_TO_STATUS[newResult];
       if (newStatus && interaction.customer_id) {
         const updateData = { last_interaction_date: new Date().toISOString(), status: newStatus };
+        if (newResult === 'semana_experimental') {
+          updateData.trial_start_date = new Date().toISOString().split('T')[0];
+        }
         const nextActionInfo = NEXT_ACTION_MAP[newResult];
         if (nextActionInfo) {
           let d;

@@ -21,7 +21,7 @@ export default function CustomerForm({ customer, onSave, onClose, onDelete }) {
   const [form, setForm] = useState({
     name: '', phone: '', objective: '', status: 'novo_contato', profile: 'outro',
     notes: '', next_action: '', next_action_date: '', assigned_to: '',
-    lead_source: '', lead_source_custom: '',
+    lead_source: '', lead_source_custom: '', trial_start_date: '',
   });
 
   useEffect(() => {
@@ -37,6 +37,7 @@ export default function CustomerForm({ customer, onSave, onClose, onDelete }) {
         assigned_to: customer.assigned_to || '',
         lead_source: isPreset ? existingSource : (existingSource ? '__outro' : ''),
         lead_source_custom: isPreset ? '' : existingSource,
+        trial_start_date: customer.trial_start_date ? customer.trial_start_date.split('T')[0] : '',
       });
     }
   }, [customer]);
@@ -112,6 +113,12 @@ export default function CustomerForm({ customer, onSave, onClose, onDelete }) {
               </Select>
             </div>
           </div>
+          {form.status === 'semana_experimental' && (
+            <div>
+              <Label className="mb-1.5 block">Início da Semana Experimental</Label>
+              <Input type="date" value={form.trial_start_date} onChange={e => setForm({ ...form, trial_start_date: e.target.value })} />
+            </div>
+          )}
           <div>
             <Label className="mb-1.5 block">Próxima Ação</Label>
             <Input value={form.next_action} onChange={e => setForm({ ...form, next_action: e.target.value })} placeholder="Retornar amanhã, aguardar resposta..." />
