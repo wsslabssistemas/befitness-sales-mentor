@@ -263,6 +263,16 @@ PERFIL DO CLIENTE: ${profileLabel}
 
 ${historyText}
 
+DETECÇÃO DE AVANÇO NA JORNADA:
+Analise se esta conversa indica que o cliente está pronto para avançar na jornada (mesmo que pule etapas). Por exemplo:
+- Cliente na descoberta que diz "quero fazer a semana experimental" → semana_experimental
+- Cliente na proposta que diz "quero fechar" → matriculado
+- Cliente que demonstra intenção de visitar → proposta_enviada
+
+STATUS DISPONÍVEIS: novo_contato, descobrindo_necessidade, proposta_enviada, negociacao, semana_experimental, matriculado, perdido
+
+Se a conversa indicar claramente que o cliente está pronto para um novo estágio, preencha status_sugerido com o novo status e motivo_status com a explicação. Caso contrário, deixe status_sugerido vazio.
+
 CONVERSA DO WHATSAPP (o cliente escreveu):
 ${conversation}
 
@@ -282,6 +292,8 @@ Analise esta conversa e gere a melhor resposta para enviar ao cliente agora.`;
             emocao_dominante: { type: 'string', description: 'Emoção dominante identificada no cliente' },
             tecnica_selecionada: { type: 'string', description: 'Nome da técnica de venda selecionada e mestre de referência (ex: Reduction to the Ridiculous - Brian Tracy)' },
             motivo_selecao: { type: 'string', description: 'Por que esta técnica foi escolhida para esta situação específica de atendimento' },
+            status_sugerido: { type: 'string', description: 'Status sugerido para avançar a jornada (novo_contato, descobrindo_necessidade, proposta_enviada, negociacao, semana_experimental, matriculado, perdido), ou string vazia se não houver avanço' },
+            motivo_status: { type: 'string', description: 'Explicação do porquê do status sugerido, ou string vazia' },
           },
         },
       });
@@ -359,6 +371,63 @@ Analise esta conversa e gere a melhor resposta para enviar ao cliente agora.`;
     }
   };
 
+  const handleSuggestedUpdate = async (newStatus) => {
+    if (!selectedCustomer) {
+      alert('Selecione um cliente para atualizar a jornada.');
+      return;
+    }
+    try {
+      const customer = customers.find(c => c.id === selectedCustomer);
+      await base44.entities.Interaction.create({
+        customer_id: selectedCustomer,
+        customer_name: customer?.name || '',
+        conversation,
+        suggested_response: analysis?.resposta_sugerida || '',
+        objective: analysis?.objetivo_resposta || '',
+        explanation: analysis?.explicacao || '',
+        techniques: Array.isArray(analysis?.tecnicas) ? analysis.tecnicas.join(', ') : (analysis?.tecnicas || ''),
+        next_step: analysis?.proximo_passo || '',
+        result: 'pendente',
+        profile_used: profile,
+        handled_by: selectedVendor || '',
+      });
+
+      const updateData = {
+        status: newStatus,
+        last_interaction_date: new Date().toISOString()
+      };
+      if (newStatus === 'semana_experimental') {
+        updateData.trial_start_date = new Date().toISOString().split('T')[0];
+      }
+      if (newStatus === 'matriculado') {
+        updateData.enrollment_date = new Date().toISOString().split('T')[0];
+      }
+
+      const STATUS_NEXT_ACTION = {
+        novo_contato: { action: 'Iniciar descoberta de necessidades', days: 1 },
+        descobrindo_necessidade: { action: 'Continuar descoberta e qualificar', days: 2 },
+        proposta_enviada: { action: 'Acompanhar resposta da proposta', days: 2 },
+        negociacao: { action: 'Tratar objeções e conduzir ao fechamento', days: 1 },
+        semana_experimental: { action: 'Acompanhamento do trial (Dia 2)', days: 2 },
+        matriculado: { action: 'Pós-venda: acompanhar e pedir indicações', days: 3 },
+        perdido: { action: 'Tentar reativação', days: 7 },
+      };
+      const nextActionInfo = STATUS_NEXT_ACTION[newStatus];
+      if (nextActionInfo) {
+        const date = new Date();
+        date.setDate(date.getDate() + nextActionInfo.days);
+        updateData.next_action = nextActionInfo.action;
+        updateData.next_action_date = date.toISOString().split('T')[0];
+      }
+
+      await base44.entities.Customer.update(selectedCustomer, updateData);
+      navigate(`/cliente/${selectedCustomer}`);
+    } catch (e) {
+      console.error(e);
+      alert('Erro ao atualizar jornada. Tente novamente.');
+    }
+  };
+
   return (
     <div className="p-6 md:p-8 max-w-3xl mx-auto">
       <div className="mb-6">
@@ -432,7 +501,9 @@ Analise esta conversa e gere a melhor resposta para enviar ao cliente agora.`;
           copied={copied}
           onCopy={handleCopy}
           onSaveResult={handleSaveResult}
+          onSuggestedUpdate={handleSuggestedUpdate}
           hasCustomer={!!selectedCustomer}
+          currentStatus={customers.find(c => c.id === selectedCustomer)?.status}
         />
       )}
 

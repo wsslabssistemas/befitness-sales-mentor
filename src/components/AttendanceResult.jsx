@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Copy, Check, Target, Lightbulb, ArrowRight, Brain, Heart, TrendingUp, Crosshair, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { RESULT_CONFIG } from '@/lib/statusConfig';
+import { RESULT_CONFIG, STATUS_CONFIG } from '@/lib/statusConfig';
 
-export default function AttendanceResult({ analysis, copied, onCopy, onSaveResult, hasCustomer }) {
+export default function AttendanceResult({ analysis, copied, onCopy, onSaveResult, onSuggestedUpdate, hasCustomer, currentStatus }) {
   const [pendingVisit, setPendingVisit] = useState(false);
   const [visitDate, setVisitDate] = useState('');
 
@@ -93,6 +93,33 @@ export default function AttendanceResult({ analysis, copied, onCopy, onSaveResul
         <div className="bg-white rounded-xl border border-gray-100 p-4">
           <p className="text-xs text-gray-400 flex items-center gap-1 mb-1"><ArrowRight className="w-3 h-3" /> Próximo Passo Recomendado</p>
           <p className="text-sm font-medium text-orange-600">{analysis.proximo_passo}</p>
+        </div>
+      )}
+
+      {hasCustomer && analysis.status_sugerido && analysis.status_sugerido !== currentStatus && STATUS_CONFIG[analysis.status_sugerido] && (
+        <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-200 p-5">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+              <TrendingUp className="w-5 h-5 text-white" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-green-700 mb-1">🚀 Avanço na Jornada Detectado</p>
+              <p className="text-sm text-gray-700 mb-1">
+                O cliente está pronto para avançar para: <span className={`font-medium px-2 py-0.5 rounded-full text-xs ${STATUS_CONFIG[analysis.status_sugerido]?.badge}`}>{STATUS_CONFIG[analysis.status_sugerido]?.label}</span>
+              </p>
+              {analysis.motivo_status && (
+                <p className="text-xs text-gray-500 mb-3">{analysis.motivo_status}</p>
+              )}
+              <Button
+                size="sm"
+                onClick={() => onSuggestedUpdate(analysis.status_sugerido)}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                <ArrowRight className="w-3.5 h-3.5 mr-1.5" />
+                Atualizar Jornada
+              </Button>
+            </div>
+          </div>
         </div>
       )}
 
