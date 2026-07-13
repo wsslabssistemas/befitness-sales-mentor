@@ -1,7 +1,7 @@
 {
   "name": "Be Fitness — Assistente Comercial",
   "short_name": "Be Fitness",
-  "description": "Assistente comercial inteligente para academias",
+  "description": "Plataforma de vendas e atendimento comercial da academia",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f1117",
