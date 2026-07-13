@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { Users, MessageSquare, BookOpen, BarChart3, FileText, Clock, Download } from 'lucide-react';
+import { Users, MessageSquare, BookOpen, BarChart3, FileText, Clock } from 'lucide-react';
+import InstallAppModal from './InstallAppModal';
 import DigitalClock from './DigitalClock';
 
 const LOGO_URL = 'https://media.base44.com/images/public/6a4e5171867839bd68b9280e/632f9e5d1_WhatsAppImage2026-07-08at123414.jpeg';
@@ -17,18 +18,7 @@ const navItems = [
 
 export default function Sidebar() {
   const [overdueCount, setOverdueCount] = useState(0);
-  const [installPrompt, setInstallPrompt] = useState(null);
-  const [isInstalled, setIsInstalled] = useState(false);
 
-  useEffect(() => {
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setIsInstalled(true);
-      return;
-    }
-    const handler = (e) => { e.preventDefault(); setInstallPrompt(e); };
-    window.addEventListener('beforeinstallprompt', handler);
-    return () => window.removeEventListener('beforeinstallprompt', handler);
-  }, []);
 
   useEffect(() => {
     const loadCount = async () => {
@@ -81,28 +71,9 @@ export default function Sidebar() {
           </NavLink>
         ))}
       </nav>
-      {!isInstalled && (
-        <div className="px-2 lg:px-3 pb-2" style={{borderTop: '1px solid hsl(229,20%,11%)', paddingTop: '8px'}}>
-          {installPrompt ? (
-            <button
-              onClick={async () => {
-                installPrompt.prompt();
-                const { outcome } = await installPrompt.userChoice;
-                if (outcome === 'accepted') { setInstallPrompt(null); setIsInstalled(true); }
-              }}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-orange-400 bg-orange-500/10 hover:bg-orange-500/20 transition-all"
-            >
-              <Download className="w-5 h-5 flex-shrink-0" />
-              <span className="hidden lg:inline">Instalar App</span>
-            </button>
-          ) : (
-            <div className="hidden lg:flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-slate-500">
-              <Download className="w-4 h-4 flex-shrink-0" />
-              <span>Abra no Chrome/Edge para instalar como app</span>
-            </div>
-          )}
-        </div>
-      )}
+      <div className="px-2 lg:px-3 pb-2" style={{borderTop: '1px solid hsl(229,20%,11%)', paddingTop: '8px'}}>
+        <InstallAppModal />
+      </div>
       <div className="hidden lg:block" style={{borderTop: '1px solid hsl(229,20%,11%)'}}>
         <DigitalClock />
       </div>
