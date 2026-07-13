@@ -23,6 +23,7 @@ export default function CustomerForm({ customer, onSave, onClose, onDelete }) {
     notes: '', next_action: '', next_action_date: '', assigned_to: '',
     lead_source: '', lead_source_custom: '', trial_start_date: '',
     enrollment_date: '', plan_type: 'trimestral',
+    lost_date: '',
   });
 
   useEffect(() => {
@@ -41,6 +42,7 @@ export default function CustomerForm({ customer, onSave, onClose, onDelete }) {
         trial_start_date: customer.trial_start_date ? customer.trial_start_date.split('T')[0] : '',
         enrollment_date: customer.enrollment_date ? customer.enrollment_date.split('T')[0] : '',
         plan_type: customer.plan_type || 'trimestral',
+        lost_date: customer.lost_date ? customer.lost_date.split('T')[0] : '',
       });
     }
   }, [customer]);
@@ -52,6 +54,9 @@ export default function CustomerForm({ customer, onSave, onClose, onDelete }) {
       data.lead_source = data.lead_source_custom || '';
     }
     delete data.lead_source_custom;
+    if (data.status === 'perdido' && !data.lost_date) {
+      data.lost_date = new Date().toISOString().split('T')[0];
+    }
     onSave(data);
   };
 

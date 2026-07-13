@@ -34,6 +34,9 @@ export default function InteractionCard({ interaction, onUpdated }) {
         if (newResult === 'matriculou') {
           updateData.enrollment_date = new Date().toISOString().split('T')[0];
         }
+        if (newResult === 'desistiu') {
+          updateData.lost_date = new Date().toISOString().split('T')[0];
+        }
         const nextActionInfo = NEXT_ACTION_MAP[newResult];
         if (nextActionInfo) {
           let d;

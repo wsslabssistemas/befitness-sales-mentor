@@ -85,6 +85,11 @@
         "semestral",
         "anual"
       ]
+    },
+    "lost_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Data de Perda"
     }
   },
   "required": [

@@ -193,6 +193,26 @@ export default function CustomerJourney({ customer, interactions, onSaved }) {
         </div>
       )}
 
+      {journeyInfo.isLost && journeyInfo.reengagementInfo && (
+        <div className="mt-4 bg-gray-50/50 rounded-xl p-3 border border-gray-200">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-medium text-gray-600">Ciclos de reativação</p>
+            <span className="text-xs text-gray-400">{journeyInfo.reengagementInfo.daysLost} dias desde a perda</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            {journeyInfo.reengagementInfo.milestones.map(m => (
+              <div key={m.day} className={`flex-1 text-center py-1.5 px-1 rounded-lg text-[11px] font-medium ${
+                m.done ? 'bg-green-100 text-green-700' :
+                m.due ? 'bg-orange-100 text-orange-700' :
+                'bg-gray-50 text-gray-400'
+              }`}>
+                {m.day === 365 ? '1 ano' : `${m.day / 30}m`}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {!needTrialDate && !needEnrollmentDate && msgStage && (
         <div className={`mt-5 rounded-xl p-4 border ${
           journeyInfo.isLost ? 'bg-gray-50 border-gray-200' : 'bg-orange-50/50 border-orange-100'

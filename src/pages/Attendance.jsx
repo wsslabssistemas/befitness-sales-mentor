@@ -343,6 +343,9 @@ Analise esta conversa e gere a melhor resposta para enviar ao cliente agora.`;
       if (result === 'matriculou') {
         updateData.enrollment_date = new Date().toISOString().split('T')[0];
       }
+      if (result === 'desistiu') {
+        updateData.lost_date = new Date().toISOString().split('T')[0];
+      }
       const NEXT_ACTION_MAP = {
         respondeu: { action: 'Continuar conversa e descobrir necessidades', days: 2 },
         marcou_visita: { action: 'Visita agendada', days: 1 },
@@ -401,6 +404,9 @@ Analise esta conversa e gere a melhor resposta para enviar ao cliente agora.`;
       }
       if (newStatus === 'matriculado') {
         updateData.enrollment_date = new Date().toISOString().split('T')[0];
+      }
+      if (newStatus === 'perdido') {
+        updateData.lost_date = new Date().toISOString().split('T')[0];
       }
 
       const STATUS_NEXT_ACTION = {

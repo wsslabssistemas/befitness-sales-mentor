@@ -36,6 +36,8 @@ const PLAN_DURATION_DAYS = {
 
 const RETENTION_MILESTONES = [30, 45, 60, 90];
 
+const REENGAGEMENT_MILESTONES = [90, 180, 365];
+
 export function getJourneyInfo(customer, interactions = []) {
   const level = STATUS_LEVEL[customer.status] ?? 0;
   const isLost = customer.status === 'perdido';
@@ -59,12 +61,18 @@ export function getJourneyInfo(customer, interactions = []) {
     retentionInfo = getRetentionInfo(customer, interactions);
   }
 
+  let reengagementInfo = null;
+  if (customer.status === 'perdido') {
+    reengagementInfo = getReengagementInfo(customer, interactions);
+  }
+
   return {
     stages,
     currentStageId,
     isLost,
     trialInfo,
     retentionInfo,
+    reengagementInfo,
     guidance: STAGE_GUIDANCE[currentStageId] || STAGE_GUIDANCE.contato,
   };
 }
@@ -144,10 +152,65 @@ export function getRetentionAlert(customer) {
   return null;
 }
 
+export function getReengagementInfo(customer, interactions = []) {
+  if (customer.status !== 'perdido' || !customer.lost_date) return null;
+
+  const start = new Date(customer.lost_date + 'T00:00:00');
+  start.setHours(0, 0, 0, 0);
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const daysLost = Math.floor((now - start) / 86400000);
+
+  const hasInteractionOnOrAfter = (daysAfterStart) => {
+    const threshold = new Date(start);
+    threshold.setDate(threshold.getDate() + daysAfterStart);
+    return interactions.some(i => new Date(i.created_date) >= threshold);
+  };
+
+  const milestones = REENGAGEMENT_MILESTONES.map(m => ({
+    day: m,
+    due: daysLost >= m,
+    done: daysLost >= m && hasInteractionOnOrAfter(m - 10),
+  }));
+
+  const currentMilestone = milestones.find(m => m.due && !m.done);
+
+  return { daysLost, milestones, currentMilestoneDay: currentMilestone?.day || null };
+}
+
+export function getReengagementAlert(customer) {
+  if (customer.status !== 'perdido' || !customer.lost_date) return null;
+
+  const start = new Date(customer.lost_date + 'T00:00:00');
+  start.setHours(0, 0, 0, 0);
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const daysLost = Math.floor((now - start) / 86400000);
+
+  const lastInt = customer.last_interaction_date ? new Date(customer.last_interaction_date) : null;
+
+  for (const m of REENGAGEMENT_MILESTONES) {
+    if (daysLost >= m) {
+      const threshold = new Date(start);
+      threshold.setDate(threshold.getDate() + m - 10);
+      if (!lastInt || lastInt < threshold) {
+        return { milestone: m, daysLost };
+      }
+    }
+  }
+  return null;
+}
+
 export function getMessageStage(customer, journeyInfo, renewalInfo) {
   const { currentStageId, trialInfo, isLost } = journeyInfo;
 
-  if (isLost) return { stage: 'reativacao', label: 'Reativação' };
+  if (isLost) {
+    if (!customer.lost_date) return { stage: 'reativacao', label: 'Reativação' };
+    if (journeyInfo.reengagementInfo && journeyInfo.reengagementInfo.currentMilestoneDay) {
+      return { stage: `reativacao_${journeyInfo.reengagementInfo.currentMilestoneDay}`, label: `Reativação (${journeyInfo.reengagementInfo.currentMilestoneDay} dias)` };
+    }
+    return null;
+  }
 
   if (currentStageId === 'trial') {
     if (!trialInfo || !trialInfo.currentStageId) return null;
@@ -300,6 +363,36 @@ const STAGE_CONFIGS = {
 - Loss Aversion (Kahneman): "Não perca o ritmo que conquistou"
 - Rehash for Referrals (Belfort): peça indicações
 - Renewal prep: prepare para a conversa de renovação`,
+  },
+  reativacao_90: {
+    title: 'REATIVAÇÃO — 3 meses desde a perda do cliente',
+    goal: 'O cliente foi para outra academia há 3 meses. Ofereça a semana free novamente com uma abordagem calorosa e sem pressão.',
+    techniques: `TÉCNICAS A APLICAR:
+- Puppy Dog Close (Brian Tracy): "Temos uma semana free pra você voltar e sentir a diferença"
+- Pattern Interrupt: quebre o padrão — não seja comercial, seja humano e genuíno
+- "We miss you": mostre que o cliente é valorizado e que sentiram a falta dele
+- Curiosity Gap: "Fizemos algumas mudanças que acho que vão te surpreender"
+- Sem pressão: não cobre a saída, apenas reabra a porta`,
+  },
+  reativacao_180: {
+    title: 'REATIVAÇÃO — 6 meses desde a perda do cliente',
+    goal: 'O cliente está há 6 meses em outra academia. Ofereça uma promoção específica de retorno e mostre as novidades.',
+    techniques: `TÉCNICAS A APLICAR:
+- Grand Slam Offer (Hormozi): semana free + brinde + isenção de matrícula
+- Curiosity Gap: "Muita coisa mudou em 6 meses, vem conhecer"
+- Loss Aversion: "Você já investiu tempo aqui, não deixe de aproveitar"
+- Takeaway: "A promoção de retorno é por tempo limitado"
+- Social proof: "Vários alunos que voltaram estão adorando as novidades"`,
+  },
+  reativacao_365: {
+    title: 'REATIVAÇÃO — 1 ano desde a perda do cliente',
+    goal: 'O cliente está há 1 ano em outra academia. Faça uma oferta especial de aniversário e reabra o relacionamento.',
+    techniques: `TÉCNICAS A APLICAR:
+- Pattern Interrupt: "Faz um ano! Lembrei de você e não pude deixar de mandar mensagem"
+- Grand Slam Offer (Hormozi): semana free + brinde + isenção + plano com desconto
+- Future Pacing (Tracy): "Imagina daqui 3 meses de volta na Be Fitness"
+- Takeaway: "A oferta de aniversário é válida só este mês"
+- Reopen relationship: não venda, apenas reconecte`,
   },
 };
 
