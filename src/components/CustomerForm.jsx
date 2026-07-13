@@ -13,6 +13,7 @@ const LEAD_SOURCES = ['Instagram', 'Facebook', 'WhatsApp', 'Telefone', 'Presenci
 
 export default function CustomerForm({ customer, onSave, onClose, onDelete }) {
   const [vendors, setVendors] = useState([]);
+  const [duplicateError, setDuplicateError] = useState('');
 
   useEffect(() => {
     base44.entities.Vendor.filter({ status: 'ativo' }).then(setVendors).catch(console.error);
@@ -47,8 +48,25 @@ export default function CustomerForm({ customer, onSave, onClose, onDelete }) {
     }
   }, [customer]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setDuplicateError('');
+
+    if (form.phone) {
+      const normalized = form.phone.replace(/\D/g, '');
+      if (normalized.length > 0) {
+        const existing = await base44.entities.Customer.list('-created_date', 500);
+        const duplicate = existing.find(c => {
+          if (customer && c.id === customer.id) return false;
+          return c.phone && c.phone.replace(/\D/g, '') === normalized;
+        });
+        if (duplicate) {
+          setDuplicateError(`Já existe um cliente cadastrado com este número: "${duplicate.name}"`);
+          return;
+        }
+      }
+    }
+
     const data = { ...form };
     if (data.lead_source === '__outro') {
       data.lead_source = data.lead_source_custom || '';
@@ -73,7 +91,12 @@ export default function CustomerForm({ customer, onSave, onClose, onDelete }) {
           </div>
           <div>
             <Label className="mb-1.5 block">Telefone</Label>
-            <Input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="(48) 99999-9999" />
+            <Input value={form.phone} onChange={e => { setForm({ ...form, phone: e.target.value }); setDuplicateError(''); }} placeholder="(48) 99999-9999" />
+          {duplicateError && (
+            <p className="mt-1.5 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+              ⚠️ {duplicateError}
+            </p>
+          )}
           </div>
           <div>
             <Label className="mb-1.5 block">Origem do Lead</Label>
