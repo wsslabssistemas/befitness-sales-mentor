@@ -1,22 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { Plus, Search, Phone, ChevronRight, MessageCircle, AlertCircle } from 'lucide-react';
+import { Plus, Search, AlertCircle, Clock, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import StatusBadge from '@/components/StatusBadge';
 import CustomerForm from '@/components/CustomerForm';
+import CustomerCard, { getActionStatus } from '@/components/CustomerCard';
 import OverdueWidget from '@/components/OverdueWidget';
 import JourneyAlerts from '@/components/JourneyAlerts';
 import { STATUS_CONFIG } from '@/lib/statusConfig';
-
-function getWhatsAppLink(phone) {
-  if (!phone) return '#';
-  let digits = phone.replace(/\D/g, '');
-  if (digits.length === 0) return '#';
-  if (!digits.startsWith('55')) digits = '55' + digits;
-  return `https://wa.me/${digits}`;
-}
 
 function sortByUrgency(customers) {
   const now = new Date();
@@ -129,6 +120,26 @@ export default function Customers() {
         </button>
       </div>
 
+      {!loading && sorted.length > 0 && (
+        <div className="flex gap-2 mb-4 flex-wrap">
+          {[
+            { key: 'urgent', label: 'Urgente', Icon: AlertCircle, color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-100' },
+            { key: 'waiting', label: 'Aguardando', Icon: Clock, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
+            { key: 'scheduled', label: 'Em dia', Icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+          ].map(item => {
+            const count = sorted.filter(c => getActionStatus(c, now) === item.key).length;
+            if (count === 0) return null;
+            return (
+              <div key={item.key} className={`${item.bg} ${item.border} border rounded-xl px-3 py-1.5 flex items-center gap-2`}>
+                <item.Icon className={`w-4 h-4 ${item.color}`} />
+                <span className="text-sm font-semibold text-gray-700">{count}</span>
+                <span className="text-xs text-gray-500">{item.label}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       {!loading && <OverdueWidget customers={customers} />}
       {!loading && <JourneyAlerts customers={customers} />}
 
@@ -143,45 +154,9 @@ export default function Customers() {
         </div>
       ) : (
         <div className="space-y-2">
-          {sorted.map(customer => {
-            const isOverdue = customer.next_action_date && new Date(customer.next_action_date) <= now;
-            return (
-              <Link key={customer.id} to={`/cliente/${customer.id}`} className="block">
-                <div className="bg-white rounded-xl border border-gray-100 p-4 hover:border-orange-200 hover:shadow-sm transition-all group">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-1 h-12 rounded-full ${STATUS_CONFIG[customer.status]?.dot || 'bg-gray-300'}`} />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <p className="font-semibold text-gray-900 truncate">{customer.name}</p>
-                        <StatusBadge status={customer.status} />
-                        {isOverdue && (
-                          <span className="text-xs font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded-full">Atrasado</span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-4 text-sm text-gray-500 flex-wrap">
-                        {customer.phone && <span className="flex items-center gap-1"><Phone className="w-3 h-3" />{customer.phone}</span>}
-                        {customer.objective && <span>{customer.objective}</span>}
-                        {customer.next_action && <span className="text-orange-600">→ {customer.next_action}</span>}
-                      </div>
-                    </div>
-                    {customer.phone && (
-                      <a
-                        href={getWhatsAppLink(customer.phone)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={e => e.stopPropagation()}
-                        className="w-8 h-8 rounded-lg bg-green-50 hover:bg-green-100 flex items-center justify-center flex-shrink-0 transition-colors"
-                        title="Abrir WhatsApp"
-                      >
-                        <MessageCircle className="w-4 h-4 text-green-600" />
-                      </a>
-                    )}
-                    <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-orange-400 flex-shrink-0" />
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
+          {sorted.map(customer => (
+            <CustomerCard key={customer.id} customer={customer} now={now} />
+          ))}
         </div>
       )}
 
