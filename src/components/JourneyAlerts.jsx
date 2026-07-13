@@ -4,13 +4,13 @@ import { getRenewalAlert, getRetentionAlert, getReengagementAlert } from '@/lib/
 import { AlertCircle } from 'lucide-react';
 
 const ALERT_STYLES = {
-  checkin: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', label: 'Acompanhamento do trial' },
-  preclose: { bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700', label: 'Pré-fechamento' },
-  conversao: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700', label: 'Conversão pós-trial' },
-  renewal: { bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700', label: 'Renovação próxima' },
-  renewal_urgent: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700', label: 'Renovação urgente' },
-  retention: { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-700', label: 'Acompanhamento de retenção' },
-  reengagement: { bg: 'bg-gray-50', border: 'border-gray-300', text: 'text-gray-700', label: 'Reativação de cliente perdido' },
+  checkin: { bg: 'bg-blue-500/10', border: 'border-blue-500/20', text: 'text-blue-400', label: 'Acompanhamento do trial' },
+  preclose: { bg: 'bg-orange-500/10', border: 'border-orange-500/20', text: 'text-orange-400', label: 'Pré-fechamento' },
+  conversao: { bg: 'bg-red-500/10', border: 'border-red-500/20', text: 'text-red-400', label: 'Conversão pós-trial' },
+  renewal: { bg: 'bg-orange-500/10', border: 'border-orange-500/20', text: 'text-orange-400', label: 'Renovação próxima' },
+  renewal_urgent: { bg: 'bg-red-500/10', border: 'border-red-500/20', text: 'text-red-400', label: 'Renovação urgente' },
+  retention: { bg: 'bg-purple-500/10', border: 'border-purple-500/20', text: 'text-purple-400', label: 'Acompanhamento de retenção' },
+  reengagement: { bg: 'bg-slate-500/10', border: 'border-slate-500/20', text: 'text-slate-400', label: 'Reativação de cliente perdido' },
 };
 
 export default function JourneyAlerts({ customers }) {
@@ -42,20 +42,20 @@ export default function JourneyAlerts({ customers }) {
 
   return (
     <div className="mb-6 space-y-2">
-      <p className="text-xs font-medium text-gray-400 mb-2 px-1">🔔 Acompanhamentos necessários</p>
+      <p className="text-xs font-medium text-muted-foreground mb-2 px-1">🔔 Acompanhamentos necessários</p>
       {alerts.map((a) => {
         const style = ALERT_STYLES[a.type];
         return (
           <Link key={a.customer.id} to={`/cliente/${a.customer.id}`}>
-            <div className={`${style.bg} ${style.border} border rounded-xl p-3 flex items-center gap-3 hover:shadow-sm transition-all`}>
-              <AlertCircle className={`w-4 h-4 ${style.text} flex-shrink-0`} />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">{a.customer.name}</p>
+            <div className={`${style.bg} ${style.border} border rounded-xl p-3 flex items-center gap-3 hover:opacity-90 transition-all`}>
+            <AlertCircle className={`w-4 h-4 ${style.text} flex-shrink-0`} />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground truncate">{a.customer.name}</p>
                 <p className={`text-xs ${style.text}`}>
                   {style.label} • {a.isTrial ? `Dia ${a.day} do trial` : a.isRenewal ? (a.day > 0 ? `${a.day} dias para renovar` : `Vencido há ${Math.abs(a.day)} dias`) : a.isReengagement ? `Há ${a.daysLost} dias perdido` : `Dia ${a.day} de matrícula`}
                 </p>
               </div>
-              <span className="text-xs text-gray-400 flex-shrink-0">Enviar →</span>
+              <span className="text-xs text-muted-foreground flex-shrink-0">Enviar →</span>
             </div>
           </Link>
         );

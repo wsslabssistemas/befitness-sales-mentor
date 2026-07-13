@@ -30,34 +30,34 @@ export function getActionStatus(customer, now) {
 
 const ACTION_STATUS = {
   urgent: {
-    Icon: AlertCircle, iconColor: 'text-red-500', iconBg: 'bg-red-100',
-    label: 'Ação necessária', labelClass: 'text-red-600',
-    cardBg: 'bg-red-50/40', cardBorder: 'border-red-200',
+    Icon: AlertCircle, iconColor: 'text-red-400', iconBg: 'bg-red-500/15',
+    label: 'Ação necessária', labelClass: 'text-red-400',
+    cardBg: 'bg-red-500/5', cardBorder: 'border-red-500/20',
   },
   waiting: {
-    Icon: Clock, iconColor: 'text-blue-500', iconBg: 'bg-blue-100',
-    label: 'Aguardando resposta', labelClass: 'text-blue-500',
-    cardBg: 'bg-white', cardBorder: 'border-gray-100',
+    Icon: Clock, iconColor: 'text-blue-400', iconBg: 'bg-blue-500/15',
+    label: 'Aguardando resposta', labelClass: 'text-blue-400',
+    cardBg: 'bg-card', cardBorder: 'border-border',
   },
   scheduled: {
-    Icon: CheckCircle2, iconColor: 'text-emerald-500', iconBg: 'bg-emerald-100',
-    label: 'Em dia', labelClass: 'text-emerald-600',
-    cardBg: 'bg-white', cardBorder: 'border-gray-100',
+    Icon: CheckCircle2, iconColor: 'text-emerald-400', iconBg: 'bg-emerald-500/15',
+    label: 'Em dia', labelClass: 'text-emerald-400',
+    cardBg: 'bg-card', cardBorder: 'border-border',
   },
   done: {
-    Icon: CheckCircle2, iconColor: 'text-gray-400', iconBg: 'bg-gray-100',
-    label: 'Matriculado', labelClass: 'text-gray-500',
-    cardBg: 'bg-gray-50/50', cardBorder: 'border-gray-100',
+    Icon: CheckCircle2, iconColor: 'text-slate-500', iconBg: 'bg-slate-500/10',
+    label: 'Matriculado', labelClass: 'text-slate-500',
+    cardBg: 'bg-card', cardBorder: 'border-border',
   },
   lost: {
-    Icon: Pause, iconColor: 'text-gray-400', iconBg: 'bg-gray-100',
-    label: 'Perdido', labelClass: 'text-gray-500',
-    cardBg: 'bg-gray-50/50', cardBorder: 'border-gray-100',
+    Icon: Pause, iconColor: 'text-slate-600', iconBg: 'bg-slate-500/10',
+    label: 'Perdido', labelClass: 'text-slate-500',
+    cardBg: 'bg-card', cardBorder: 'border-border',
   },
   idle: {
-    Icon: Circle, iconColor: 'text-gray-400', iconBg: 'bg-gray-100',
-    label: 'Sem ação definida', labelClass: 'text-gray-400',
-    cardBg: 'bg-white', cardBorder: 'border-gray-100',
+    Icon: Circle, iconColor: 'text-slate-500', iconBg: 'bg-slate-500/10',
+    label: 'Sem ação definida', labelClass: 'text-slate-500',
+    cardBg: 'bg-card', cardBorder: 'border-border',
   },
 };
 
@@ -78,7 +78,7 @@ export default function CustomerCard({ customer, now }) {
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <p className="font-semibold text-gray-900 truncate">{customer.name}</p>
+              <p className="font-semibold text-foreground truncate">{customer.name}</p>
               <StatusBadge status={customer.status} />
             </div>
             <div className="flex items-center gap-3 text-sm flex-wrap">
@@ -91,7 +91,7 @@ export default function CustomerCard({ customer, now }) {
               {actionKey === 'urgent' && customer.next_action && (
                 <span className="text-xs text-red-500">→ {customer.next_action}</span>
               )}
-              {customer.phone && <span className="flex items-center gap-1 text-gray-400 text-xs"><Phone className="w-3 h-3" />{customer.phone}</span>}
+              {customer.phone && <span className="flex items-center gap-1 text-muted-foreground text-xs"><Phone className="w-3 h-3" />{customer.phone}</span>}
             </div>
           </div>
           {customer.phone && (
@@ -106,7 +106,7 @@ export default function CustomerCard({ customer, now }) {
               <MessageCircle className="w-4 h-4 text-green-600" />
             </a>
           )}
-          <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-gray-400 flex-shrink-0" />
+          <ChevronRight className="w-5 h-5 text-muted-foreground/40 group-hover:text-muted-foreground flex-shrink-0" />
         </div>
       </div>
     </Link>

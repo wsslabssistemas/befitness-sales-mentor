@@ -37,25 +37,25 @@ export default function Sidebar() {
   }, []);
 
   return (
-    <aside className="w-16 lg:w-64 bg-white border-r border-gray-100 flex-shrink-0 flex flex-col h-screen sticky top-0 z-10">
-      <div className="p-4 lg:p-6 flex items-center gap-2.5 border-b border-gray-50">
-        <img src={LOGO_URL} alt="Be Fitness" className="w-10 h-10 rounded-xl object-cover flex-shrink-0" />
+    <aside className="w-16 lg:w-64 flex-shrink-0 flex flex-col h-screen sticky top-0 z-10" style={{background: 'hsl(229,25%,6%)', borderRight: '1px solid hsl(229,20%,13%)'}}>
+      <div className="p-4 lg:p-6 flex items-center gap-3" style={{borderBottom: '1px solid hsl(229,20%,11%)'}}>
+        <img src={LOGO_URL} alt="Be Fitness" className="w-10 h-10 rounded-xl object-cover flex-shrink-0 ring-2 ring-orange-500/20" />
         <div className="hidden lg:block">
-          <p className="font-bold text-gray-900 text-sm leading-tight">Be Fitness</p>
-          <p className="text-xs text-gray-400">Assistente Comercial</p>
+          <p className="font-bold text-white text-sm leading-tight">Be Fitness</p>
+          <p className="text-xs" style={{color:'hsl(220,10%,45%)'}}>Assistente Comercial</p>
         </div>
       </div>
-      <nav className="flex-1 px-2 lg:px-3 py-4 space-y-1">
+      <nav className="flex-1 px-2 lg:px-3 py-4 space-y-0.5">
         {navItems.map(({ to, label, icon: Icon, end }) => (
           <NavLink
             key={to}
             to={to}
             end={end}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 isActive
-                  ? 'bg-orange-50 text-orange-600'
-                  : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                  ? 'bg-orange-500/15 text-orange-400'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`
             }
           >
@@ -69,7 +69,7 @@ export default function Sidebar() {
           </NavLink>
         ))}
       </nav>
-      <div className="border-t border-gray-50 hidden lg:block">
+      <div className="hidden lg:block" style={{borderTop: '1px solid hsl(229,20%,11%)'}}>
         <DigitalClock />
       </div>
     </aside>

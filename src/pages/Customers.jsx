@@ -78,8 +78,8 @@ export default function Customers() {
     <div className="p-6 md:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Clientes</h1>
-          <p className="text-gray-500 text-sm mt-1">{filtered.length} cliente(s) • ordenados por urgência</p>
+          <h1 className="text-2xl font-bold text-foreground">Clientes</h1>
+          <p className="text-muted-foreground text-sm mt-1">{filtered.length} cliente(s) • ordenados por urgência</p>
         </div>
         <Button onClick={() => setShowForm(true)} className="bg-orange-500 hover:bg-orange-600">
           <Plus className="w-4 h-4 mr-1.5" /> Novo Cliente
@@ -91,19 +91,19 @@ export default function Customers() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Buscar por nome ou telefone..." className="pl-9" />
         </div>
-        <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="px-3 py-2 rounded-lg border border-gray-200 text-sm bg-white">
+        <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="px-3 py-2 rounded-xl border border-border text-sm bg-card text-foreground">
           <option value="all">Todos os status</option>
           {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
             <option key={key} value={key}>{cfg.label}</option>
           ))}
         </select>
-        <select value={filterVendor} onChange={e => setFilterVendor(e.target.value)} className="px-3 py-2 rounded-lg border border-gray-200 text-sm bg-white">
+        <select value={filterVendor} onChange={e => setFilterVendor(e.target.value)} className="px-3 py-2 rounded-xl border border-border text-sm bg-card text-foreground">
           <option value="all">Todos responsáveis</option>
           {vendors.map(v => (
             <option key={v.id} value={v.name}>{v.name}</option>
           ))}
         </select>
-        <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="px-3 py-2 rounded-lg border border-gray-200 text-sm bg-white">
+        <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="px-3 py-2 rounded-xl border border-border text-sm bg-card text-foreground">
           <option value="urgency">Ordenar: Urgência</option>
           <option value="name">Ordenar: Nome A-Z</option>
           <option value="created">Ordenar: Cadastro recente</option>
@@ -111,8 +111,8 @@ export default function Customers() {
         </select>
         <button
           onClick={() => setAttentionToday(!attentionToday)}
-          className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-1.5 flex-shrink-0 ${
-            attentionToday ? 'bg-orange-500 text-white' : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-50'
+          className={`px-3 py-2 rounded-xl text-sm font-medium flex items-center gap-1.5 flex-shrink-0 ${
+            attentionToday ? 'bg-orange-500 text-white' : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-secondary'
           }`}
         >
           <AlertCircle className="w-4 h-4" />
@@ -123,17 +123,17 @@ export default function Customers() {
       {!loading && sorted.length > 0 && (
         <div className="flex gap-2 mb-4 flex-wrap">
           {[
-            { key: 'urgent', label: 'Urgente', Icon: AlertCircle, color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-100' },
-            { key: 'waiting', label: 'Aguardando', Icon: Clock, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-            { key: 'scheduled', label: 'Em dia', Icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+            { key: 'urgent', label: 'Urgente', Icon: AlertCircle, color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20' },
+            { key: 'waiting', label: 'Aguardando', Icon: Clock, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
+            { key: 'scheduled', label: 'Em dia', Icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
           ].map(item => {
             const count = sorted.filter(c => getActionStatus(c, now) === item.key).length;
             if (count === 0) return null;
             return (
               <div key={item.key} className={`${item.bg} ${item.border} border rounded-xl px-3 py-1.5 flex items-center gap-2`}>
                 <item.Icon className={`w-4 h-4 ${item.color}`} />
-                <span className="text-sm font-semibold text-gray-700">{count}</span>
-                <span className="text-xs text-gray-500">{item.label}</span>
+                <span className="text-sm font-semibold text-foreground">{count}</span>
+                <span className="text-xs text-muted-foreground">{item.label}</span>
               </div>
             );
           })}
@@ -144,10 +144,10 @@ export default function Customers() {
       {!loading && <JourneyAlerts customers={customers} />}
 
       {loading ? (
-        <div className="text-center py-20 text-gray-400">Carregando...</div>
+        <div className="text-center py-20 text-muted-foreground">Carregando...</div>
       ) : sorted.length === 0 ? (
         <div className="text-center py-20">
-          <p className="text-gray-400 mb-4">Nenhum cliente encontrado</p>
+          <p className="text-muted-foreground mb-4">Nenhum cliente encontrado</p>
           <Button onClick={() => setShowForm(true)} className="bg-orange-500 hover:bg-orange-600">
             <Plus className="w-4 h-4 mr-1.5" /> Cadastrar primeiro cliente
           </Button>

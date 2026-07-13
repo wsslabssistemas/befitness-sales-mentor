@@ -1,38 +1,38 @@
 export const STATUS_CONFIG = {
   novo_contato: {
     label: 'Novo Contato',
-    dot: 'bg-emerald-500',
-    badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    dot: 'bg-emerald-400',
+    badge: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
   },
   descobrindo_necessidade: {
     label: 'Descobrindo',
-    dot: 'bg-amber-500',
-    badge: 'bg-amber-50 text-amber-700 border-amber-200',
+    dot: 'bg-amber-400',
+    badge: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
   },
   proposta_enviada: {
     label: 'Proposta Enviada',
-    dot: 'bg-orange-500',
-    badge: 'bg-orange-50 text-orange-700 border-orange-200',
+    dot: 'bg-orange-400',
+    badge: 'bg-orange-500/15 text-orange-400 border-orange-500/20',
   },
   semana_experimental: {
     label: 'Semana Experimental',
-    dot: 'bg-blue-500',
-    badge: 'bg-blue-50 text-blue-700 border-blue-200',
+    dot: 'bg-blue-400',
+    badge: 'bg-blue-500/15 text-blue-400 border-blue-500/20',
   },
   negociacao: {
     label: 'Negociação',
-    dot: 'bg-purple-500',
-    badge: 'bg-purple-50 text-purple-700 border-purple-200',
+    dot: 'bg-purple-400',
+    badge: 'bg-purple-500/15 text-purple-400 border-purple-500/20',
   },
   matriculado: {
     label: 'Matriculado',
-    dot: 'bg-gray-400',
-    badge: 'bg-gray-100 text-gray-600 border-gray-200',
+    dot: 'bg-slate-400',
+    badge: 'bg-slate-500/15 text-slate-300 border-slate-500/20',
   },
   perdido: {
     label: 'Perdido',
-    dot: 'bg-gray-700',
-    badge: 'bg-gray-800 text-white border-gray-800',
+    dot: 'bg-slate-600',
+    badge: 'bg-slate-700/40 text-slate-400 border-slate-600/30',
   },
 };
 
@@ -46,13 +46,13 @@ export const PROFILE_CONFIG = {
 };
 
 export const RESULT_CONFIG = {
-  pendente: { label: 'Pendente', badge: 'bg-gray-100 text-gray-500 border-gray-200' },
-  respondeu: { label: 'Cliente respondeu', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  marcou_visita: { label: 'Marcou visita', badge: 'bg-blue-50 text-blue-700 border-blue-200' },
-  semana_experimental: { label: 'Iniciou semana experimental', badge: 'bg-purple-50 text-purple-700 border-purple-200' },
-  matriculou: { label: 'Matriculou', badge: 'bg-orange-50 text-orange-700 border-orange-200' },
-  nao_respondeu: { label: 'Não respondeu', badge: 'bg-amber-50 text-amber-700 border-amber-200' },
-  desistiu: { label: 'Desistiu', badge: 'bg-gray-100 text-gray-600 border-gray-200' },
+  pendente: { label: 'Pendente', badge: 'bg-slate-700/40 text-slate-400 border-slate-600/30' },
+  respondeu: { label: 'Cliente respondeu', badge: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20' },
+  marcou_visita: { label: 'Marcou visita', badge: 'bg-blue-500/15 text-blue-400 border-blue-500/20' },
+  semana_experimental: { label: 'Iniciou semana experimental', badge: 'bg-purple-500/15 text-purple-400 border-purple-500/20' },
+  matriculou: { label: 'Matriculou', badge: 'bg-orange-500/15 text-orange-400 border-orange-500/20' },
+  nao_respondeu: { label: 'Não respondeu', badge: 'bg-amber-500/15 text-amber-400 border-amber-500/20' },
+  desistiu: { label: 'Desistiu', badge: 'bg-slate-700/40 text-slate-400 border-slate-600/30' },
 };
 
 export const RESULT_TO_STATUS = {
