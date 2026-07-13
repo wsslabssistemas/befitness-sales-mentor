@@ -8,6 +8,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AttendanceResult from '@/components/AttendanceResult';
 import { PROFILE_CONFIG, RESULT_TO_STATUS } from '@/lib/statusConfig';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { isOpenAt, GYM_HOURS_TEXT } from '@/lib/gymHours';
 
 export default function Attendance() {
   const [searchParams] = useSearchParams();
@@ -72,6 +75,11 @@ export default function Attendance() {
             `Próximo passo recomendado: ${inter.next_step || 'N/A'}`
           ).join('\n---\n')
         : 'Este é o primeiro atendimento deste cliente — não há histórico anterior.';
+
+      const now = new Date();
+      const dayName = format(now, "EEEE", { locale: ptBR });
+      const timeStr = format(now, "HH:mm");
+      const isOpenNow = isOpenAt(now);
 
       const prompt = `Você é o Assistente Comercial Inteligente da academia Be Fitness. Sua missão é orientar o recepcionista durante o atendimento, sugerindo a melhor resposta para o cliente e explicando a técnica comercial utilizada.
 
@@ -190,6 +198,12 @@ CONTATO E LOCALIZAÇÃO:
 CONVÊNIOS ACEITOS:
 - Totalpass: plano TP+
 - Gympass: plano Basic+
+
+HORÁRIO DE FUNCIONAMENTO:
+${GYM_HOURS_TEXT}
+
+Data e hora atual: ${dayName}, às ${timeStr} — a academia está ${isOpenNow ? 'ABERTA' : 'FECHADA'} neste momento.
+IMPORTANTE: Se o cliente perguntar sobre horário de funcionamento ou se a academia está aberta, consulte SEMPRE os horários acima. Hoje é ${dayName} e às ${timeStr} a academia está ${isOpenNow ? 'aberta' : 'fechada'}. NUNCA diga que estamos abertos se está fora do horário de funcionamento.
 
 PLANOS E VALORES — 3 FORMAS DE PAGAMENTO:
 
