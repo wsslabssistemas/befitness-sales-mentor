@@ -29,6 +29,11 @@ export const STATUS_CONFIG = {
     dot: 'bg-slate-400',
     badge: 'bg-slate-500/15 text-slate-300 border-slate-500/20',
   },
+  renovado: {
+    label: 'Renovado',
+    dot: 'bg-teal-400',
+    badge: 'bg-teal-500/15 text-teal-400 border-teal-500/20',
+  },
   perdido: {
     label: 'Perdido',
     dot: 'bg-slate-600',

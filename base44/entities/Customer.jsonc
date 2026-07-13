@@ -28,6 +28,7 @@
         "semana_experimental",
         "negociacao",
         "matriculado",
+        "renovado",
         "perdido"
       ],
       "default": "novo_contato"
@@ -81,10 +82,21 @@
       "type": "string",
       "title": "Tipo de Plano",
       "enum": [
+        "mensal",
         "trimestral",
         "semestral",
         "anual"
       ]
+    },
+    "plan_start_date": {
+      "type": "string",
+      "format": "date",
+      "title": "In\u00edcio do Plano"
+    },
+    "plan_end_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Fim do Plano"
     },
     "lost_date": {
       "type": "string",

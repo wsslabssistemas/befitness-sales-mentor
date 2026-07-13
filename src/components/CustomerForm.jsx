@@ -24,6 +24,7 @@ export default function CustomerForm({ customer, onSave, onClose, onDelete }) {
     notes: '', next_action: '', next_action_date: '', assigned_to: '',
     lead_source: '', lead_source_custom: '', trial_start_date: '',
     enrollment_date: '', plan_type: 'trimestral',
+    plan_start_date: '', plan_end_date: '',
     lost_date: '',
   });
 
@@ -43,6 +44,8 @@ export default function CustomerForm({ customer, onSave, onClose, onDelete }) {
         trial_start_date: customer.trial_start_date ? customer.trial_start_date.split('T')[0] : '',
         enrollment_date: customer.enrollment_date ? customer.enrollment_date.split('T')[0] : '',
         plan_type: customer.plan_type || 'trimestral',
+        plan_start_date: customer.plan_start_date ? customer.plan_start_date.split('T')[0] : '',
+        plan_end_date: customer.plan_end_date ? customer.plan_end_date.split('T')[0] : '',
         lost_date: customer.lost_date ? customer.lost_date.split('T')[0] : '',
       });
     }
@@ -150,22 +153,35 @@ export default function CustomerForm({ customer, onSave, onClose, onDelete }) {
               <Input type="date" value={form.trial_start_date} onChange={e => setForm({ ...form, trial_start_date: e.target.value })} />
             </div>
           )}
-          {form.status === 'matriculado' && (
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label className="mb-1.5 block">Data de Matrícula</Label>
-                <Input type="date" value={form.enrollment_date} onChange={e => setForm({ ...form, enrollment_date: e.target.value })} />
-              </div>
+          {(form.status === 'matriculado' || form.status === 'renovado') && (
+            <div className="space-y-3">
+              {form.status === 'matriculado' && (
+                <div>
+                  <Label className="mb-1.5 block">Data de Matrícula</Label>
+                  <Input type="date" value={form.enrollment_date} onChange={e => setForm({ ...form, enrollment_date: e.target.value })} />
+                </div>
+              )}
               <div>
                 <Label className="mb-1.5 block">Tipo de Plano</Label>
                 <Select value={form.plan_type} onValueChange={v => setForm({ ...form, plan_type: v })}>
                   <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="mensal">Mensal</SelectItem>
                     <SelectItem value="trimestral">Trimestral</SelectItem>
                     <SelectItem value="semestral">Semestral</SelectItem>
                     <SelectItem value="anual">Anual</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="mb-1.5 block">Início do Plano</Label>
+                  <Input type="date" value={form.plan_start_date || ''} onChange={e => setForm({ ...form, plan_start_date: e.target.value })} />
+                </div>
+                <div>
+                  <Label className="mb-1.5 block">Fim do Plano</Label>
+                  <Input type="date" value={form.plan_end_date || ''} onChange={e => setForm({ ...form, plan_end_date: e.target.value })} />
+                </div>
               </div>
             </div>
           )}
