@@ -328,11 +328,14 @@ Analise esta conversa e gere a melhor resposta para enviar ao cliente agora.`;
       if (result === 'semana_experimental') {
         updateData.trial_start_date = new Date().toISOString().split('T')[0];
       }
+      if (result === 'matriculou') {
+        updateData.enrollment_date = new Date().toISOString().split('T')[0];
+      }
       const NEXT_ACTION_MAP = {
         respondeu: { action: 'Continuar conversa e descobrir necessidades', days: 2 },
         marcou_visita: { action: 'Visita agendada', days: 1 },
         semana_experimental: { action: 'Acompanhamento do trial (Dia 2)', days: 2 },
-        matriculou: { action: 'Acompanhar primeiros treinos', days: 2 },
+        matriculou: { action: 'Pós-venda: acompanhar e pedir indicações', days: 3 },
         nao_respondeu: { action: 'Retornar contato', days: 1 },
       };
       const nextActionInfo = NEXT_ACTION_MAP[result];

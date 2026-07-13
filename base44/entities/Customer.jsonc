@@ -71,6 +71,20 @@
       "type": "string",
       "format": "date",
       "title": "In\u00edcio da Semana Experimental"
+    },
+    "enrollment_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Data de Matr\u00edcula"
+    },
+    "plan_type": {
+      "type": "string",
+      "title": "Tipo de Plano",
+      "enum": [
+        "trimestral",
+        "semestral",
+        "anual"
+      ]
     }
   },
   "required": [

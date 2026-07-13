@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import StatusBadge from '@/components/StatusBadge';
 import CustomerForm from '@/components/CustomerForm';
 import OverdueWidget from '@/components/OverdueWidget';
-import TrialAlerts from '@/components/TrialAlerts';
+import JourneyAlerts from '@/components/JourneyAlerts';
 import { STATUS_CONFIG } from '@/lib/statusConfig';
 
 function getWhatsAppLink(phone) {
@@ -130,7 +130,7 @@ export default function Customers() {
       </div>
 
       {!loading && <OverdueWidget customers={customers} />}
-      {!loading && <TrialAlerts customers={customers} />}
+      {!loading && <JourneyAlerts customers={customers} />}
 
       {loading ? (
         <div className="text-center py-20 text-gray-400">Carregando...</div>
