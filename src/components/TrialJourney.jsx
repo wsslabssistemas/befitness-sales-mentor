@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { getTrialInfo, buildTrialPrompt } from '@/lib/trialJourney';
-import { Loader2, Copy, Check, Sparkles, CheckCircle2, Clock } from 'lucide-react';
+import { Loader2, Copy, Check, Sparkles, CheckCircle2, Clock, CalendarDays } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 const STAGE_META = {
   inicio: { label: 'Início', subtitle: 'Trial iniciado', icon: '🎯' },
@@ -22,9 +23,48 @@ export default function TrialJourney({ customer, interactions, onSaved }) {
   const [message, setMessage] = useState(null);
   const [copied, setCopied] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [trialDate, setTrialDate] = useState(customer.trial_start_date || new Date().toISOString().split('T')[0]);
+  const [savingDate, setSavingDate] = useState(false);
 
   const info = getTrialInfo(customer.trial_start_date, interactions, customer.status);
-  if (!info) return null;
+
+  const handleSetTrialDate = async () => {
+    setSavingDate(true);
+    try {
+      await base44.entities.Customer.update(customer.id, { trial_start_date: trialDate });
+      if (onSaved) onSaved();
+    } catch (e) {
+      console.error(e);
+      alert('Erro ao salvar data. Tente novamente.');
+    } finally {
+      setSavingDate(false);
+    }
+  };
+
+  if (!info) {
+    if (customer.status === 'semana_experimental') {
+      return (
+        <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <CalendarDays className="w-5 h-5 text-orange-500" />
+            <h2 className="font-semibold text-gray-900">Jornada da Semana Experimental</h2>
+          </div>
+          <p className="text-sm text-gray-500 mb-3">Defina a data de início da semana experimental para ativar o acompanhamento da jornada.</p>
+          <div className="flex gap-2 items-end">
+            <div className="flex-1">
+              <label className="text-xs text-gray-400 mb-1 block">Data de início</label>
+              <Input type="date" value={trialDate} onChange={e => setTrialDate(e.target.value)} />
+            </div>
+            <Button onClick={handleSetTrialDate} disabled={savingDate} className="bg-orange-500 hover:bg-orange-600">
+              {savingDate ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Check className="w-4 h-4 mr-1.5" />}
+              Ativar jornada
+            </Button>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  }
 
   const currentStage = info.stages.find(s => s.id === info.currentStageId);
   const isCompleted = customer.status === 'matriculado';
