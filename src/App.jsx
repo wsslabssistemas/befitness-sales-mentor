@@ -15,6 +15,7 @@ import Library from '@/pages/Library';
 import Indicators from '@/pages/Indicators';
 import MonthlyReport from '@/pages/MonthlyReport';
 import DailySummary from '@/pages/DailySummary';
+import Tutorial from '@/pages/Tutorial';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -50,6 +51,7 @@ const AuthenticatedApp = () => {
         <Route path="/indicadores" element={<Indicators />} />
         <Route path="/relatorio-mensal" element={<MonthlyReport />} />
         <Route path="/resumo-diario" element={<DailySummary />} />
+        <Route path="/tutorial" element={<Tutorial />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
