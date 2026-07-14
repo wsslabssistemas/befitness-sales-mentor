@@ -437,8 +437,8 @@ Analise esta conversa e gere a melhor resposta para enviar ao cliente agora.`;
   return (
     <div className="p-6 md:p-8 max-w-3xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Atendimento</h1>
-        <p className="text-gray-500 text-sm mt-1">Cole a conversa do WhatsApp e receba a melhor resposta com explicação comercial</p>
+        <h1 className="text-2xl font-bold text-foreground">Atendimento</h1>
+        <p className="text-muted-foreground text-sm mt-1">Cole a conversa do WhatsApp e receba a melhor resposta com explicação comercial</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -514,9 +514,9 @@ Analise esta conversa e gere a melhor resposta para enviar ao cliente agora.`;
       )}
 
       {!analysis && !loading && customers.length === 0 && (
-        <div className="bg-white rounded-xl border border-gray-100 p-6 text-center">
-          <Users className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-          <p className="text-sm text-gray-400">Cadastre um cliente primeiro para registrar atendimentos</p>
+        <div className="bg-card rounded-xl border border-border p-6 text-center">
+          <Users className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+          <p className="text-sm text-muted-foreground">Cadastre um cliente primeiro para registrar atendimentos</p>
         </div>
       )}
     </div>

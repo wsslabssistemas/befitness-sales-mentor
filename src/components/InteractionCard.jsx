@@ -76,14 +76,14 @@ export default function InteractionCard({ interaction, onUpdated }) {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-5">
+    <div className="bg-card rounded-xl border border-border p-5">
       <div className="flex items-center justify-between mb-3 gap-2">
         <div className="flex items-center gap-2 text-sm min-w-0">
-          {date && <span className="text-gray-500 whitespace-nowrap">{format(date, "dd 'de' MMMM", { locale: ptBR })}</span>}
-          {interaction.handled_by && <span className="text-gray-400 truncate">• {interaction.handled_by}</span>}
+          {date && <span className="text-muted-foreground whitespace-nowrap">{format(date, "dd 'de' MMMM", { locale: ptBR })}</span>}
+          {interaction.handled_by && <span className="text-muted-foreground truncate">• {interaction.handled_by}</span>}
         </div>
         <div className="flex items-center gap-1.5 flex-shrink-0">
-          {updating && <Loader2 className="w-3.5 h-3.5 text-gray-400 animate-spin" />}
+          {updating && <Loader2 className="w-3.5 h-3.5 text-muted-foreground animate-spin" />}
           <select
             value={interaction.result}
             onChange={handleResultChange}
@@ -98,16 +98,16 @@ export default function InteractionCard({ interaction, onUpdated }) {
         </div>
       </div>
       {pendingVisit && (
-        <div className="mb-3 bg-orange-50/50 rounded-lg p-3">
-          <p className="text-xs text-gray-600 mb-2 flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-orange-600" /> Para qual dia agendou a visita?
+        <div className="mb-3 bg-orange-500/10 rounded-lg p-3">
+          <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5 text-orange-400" /> Para qual dia agendou a visita?
           </p>
           <div className="flex gap-2 flex-wrap">
             <input
               type="date"
               value={visitDate}
               onChange={e => setVisitDate(e.target.value)}
-              className="px-2.5 py-1.5 rounded-lg border border-gray-200 text-sm flex-1 min-w-[140px]"
+              className="px-2.5 py-1.5 rounded-lg border border-border text-sm flex-1 min-w-[140px]"
               autoFocus
             />
             <button
@@ -119,7 +119,7 @@ export default function InteractionCard({ interaction, onUpdated }) {
             </button>
             <button
               onClick={() => { setPendingVisit(false); setVisitDate(''); }}
-              className="px-2 py-1.5 text-xs text-gray-400 hover:text-gray-600"
+              className="px-2 py-1.5 text-xs text-muted-foreground hover:text-muted-foreground"
             >
               Cancelar
             </button>
@@ -128,18 +128,18 @@ export default function InteractionCard({ interaction, onUpdated }) {
       )}
       {interaction.conversation && (
         <div className="mb-3">
-          <p className="text-xs text-gray-400 mb-1">Conversa do cliente</p>
-          <p className="text-sm text-gray-600 whitespace-pre-wrap">{interaction.conversation}</p>
+          <p className="text-xs text-muted-foreground mb-1">Conversa do cliente</p>
+          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{interaction.conversation}</p>
         </div>
       )}
       {interaction.suggested_response && (
-        <div className="mb-3 bg-orange-50/50 rounded-lg p-3">
-          <p className="text-xs text-orange-600 mb-1">Resposta enviada</p>
-          <p className="text-sm text-gray-700 whitespace-pre-wrap">{interaction.suggested_response}</p>
+        <div className="mb-3 bg-orange-500/10 rounded-lg p-3">
+          <p className="text-xs text-orange-400 mb-1">Resposta enviada</p>
+          <p className="text-sm text-foreground whitespace-pre-wrap">{interaction.suggested_response}</p>
         </div>
       )}
       {interaction.explanation && (
-        <p className="text-xs text-gray-400 italic">{interaction.explanation}</p>
+        <p className="text-xs text-muted-foreground italic">{interaction.explanation}</p>
       )}
     </div>
   );

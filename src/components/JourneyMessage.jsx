@@ -78,18 +78,18 @@ export default function JourneyMessage({ stageId, stageLabel, customer, interact
 
       {message && (
         <div className="mt-4 space-y-3">
-          <div className="bg-orange-50/50 rounded-xl p-4 border border-orange-100">
-            <p className="text-xs text-orange-600 mb-1.5 font-medium">Mensagem sugerida</p>
-            <p className="text-sm text-gray-700 whitespace-pre-wrap">{message.resposta_sugerida}</p>
+          <div className="bg-orange-500/10 rounded-xl p-4 border border-orange-500/20">
+            <p className="text-xs text-orange-400 mb-1.5 font-medium">Mensagem sugerida</p>
+            <p className="text-sm text-foreground whitespace-pre-wrap">{message.resposta_sugerida}</p>
           </div>
           {message.tecnica_utilizada && (
-            <div className="flex items-start gap-2 text-xs text-gray-500">
-              <span className="font-medium text-gray-600">Técnica:</span>
+            <div className="flex items-start gap-2 text-xs text-muted-foreground">
+              <span className="font-medium text-muted-foreground">Técnica:</span>
               <span>{message.tecnica_utilizada}</span>
             </div>
           )}
           {message.explicacao && (
-            <p className="text-xs text-gray-400 italic">{message.explicacao}</p>
+            <p className="text-xs text-muted-foreground italic">{message.explicacao}</p>
           )}
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={handleCopy}>

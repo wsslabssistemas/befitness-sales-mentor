@@ -22,7 +22,7 @@ export default function Indicators() {
     }).catch(console.error).finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="p-8 text-center text-gray-400">Carregando...</div>;
+  if (loading) return <div className="p-8 text-center text-muted-foreground">Carregando...</div>;
 
   const total = interactions.length;
 
@@ -39,31 +39,31 @@ export default function Indicators() {
   return (
     <div className="p-6 md:p-8 max-w-5xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Indicadores</h1>
-        <p className="text-gray-500 text-sm mt-1">Gestão operacional e acompanhamento do dia a dia</p>
+        <h1 className="text-2xl font-bold text-foreground">Indicadores</h1>
+        <p className="text-muted-foreground text-sm mt-1">Gestão operacional e acompanhamento do dia a dia</p>
       </div>
 
       <WeekCalendar customers={customers} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        <div className="bg-white rounded-2xl border border-gray-100 p-6">
-          <p className="font-semibold text-gray-900 mb-4">Resultados dos Atendimentos</p>
+        <div className="bg-card rounded-2xl border border-border p-6">
+          <p className="font-semibold text-foreground mb-4">Resultados dos Atendimentos</p>
           {total > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={resultCounts}>
                 <XAxis dataKey="name" tick={{ fontSize: 10 }} interval={0} angle={-20} textAnchor="end" height={60} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
-                <Tooltip cursor={{ fill: '#f8f9fa' }} contentStyle={{ borderRadius: '12px', border: '1px solid #f0f0f0' }} />
+                <Tooltip cursor={{ fill: 'rgba(255,255,255,0.05)' }} contentStyle={{ borderRadius: '12px', border: '1px solid hsl(229,20%,18%)', background: 'hsl(229,22%,10%)', color: '#fff' }} />
                 <Bar dataKey="count" radius={[8, 8, 0, 0]}>
                   {resultCounts.map((_, i) => <Cell key={i} fill="#f97316" />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
-          ) : <p className="text-center text-gray-400 py-12">Sem dados ainda</p>}
+          ) : <p className="text-center text-muted-foreground py-12">Sem dados ainda</p>}
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-100 p-6">
-          <p className="font-semibold text-gray-900 mb-4">Clientes por Status</p>
+        <div className="bg-card rounded-2xl border border-border p-6">
+          <p className="font-semibold text-foreground mb-4">Clientes por Status</p>
           <div className="space-y-2.5">
             {Object.entries(STATUS_CONFIG).map(([key, cfg]) => {
               const count = statusCounts[key] || 0;
@@ -71,11 +71,11 @@ export default function Indicators() {
               return (
                 <div key={key} className="flex items-center gap-3">
                   <span className={`w-2 h-2 rounded-full ${cfg.dot} flex-shrink-0`} />
-                  <span className="text-xs text-gray-600 w-28 truncate">{cfg.label}</span>
-                  <div className="flex-1 bg-gray-50 rounded-full h-5 overflow-hidden">
+                  <span className="text-xs text-muted-foreground w-28 truncate">{cfg.label}</span>
+                  <div className="flex-1 bg-secondary rounded-full h-5 overflow-hidden">
                     <div className={`h-full ${cfg.dot} opacity-60 rounded-full transition-all`} style={{ width: `${Math.max(pct, 2)}%` }} />
                   </div>
-                  <span className="text-sm font-medium text-gray-700 w-6 text-right">{count}</span>
+                  <span className="text-sm font-medium text-foreground w-6 text-right">{count}</span>
                 </div>
               );
             })}

@@ -17,10 +17,10 @@ export default function SalesFunnel({ customers }) {
   const maxCount = Math.max(...counts.map(c => c.count), 1);
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6">
+    <div className="bg-card rounded-2xl border border-border p-6">
       <div className="flex items-center gap-2 mb-4">
         <Filter className="w-5 h-5 text-orange-500" />
-        <p className="font-semibold text-gray-900">Funil de Vendas</p>
+        <p className="font-semibold text-foreground">Funil de Vendas</p>
       </div>
       <div className="space-y-2">
         {counts.map((stage, i) => {
@@ -29,14 +29,14 @@ export default function SalesFunnel({ customers }) {
           const dropoff = prevCount > 0 ? ((1 - stage.count / prevCount) * 100).toFixed(0) : 0;
           return (
             <div key={stage.key} className="flex items-center gap-3">
-              <span className="text-xs text-gray-500 w-24 truncate flex-shrink-0">{stage.label}</span>
+              <span className="text-xs text-muted-foreground w-24 truncate flex-shrink-0">{stage.label}</span>
               <div className="flex-1">
                 <div className={`${stage.color} h-8 rounded-lg flex items-center px-3 transition-all`} style={{ width: `${Math.max(widthPct, 10)}%` }}>
                   <span className="text-sm font-bold text-white">{stage.count}</span>
                 </div>
               </div>
               {i > 0 ? (
-                <span className={`text-xs flex-shrink-0 w-10 text-right ${stage.count < prevCount ? 'text-red-400' : 'text-gray-300'}`}>
+                <span className={`text-xs flex-shrink-0 w-10 text-right ${stage.count < prevCount ? 'text-red-400' : 'text-muted-foreground'}`}>
                   {stage.count < prevCount ? `-${dropoff}%` : '—'}
                 </span>
               ) : (

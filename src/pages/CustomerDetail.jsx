@@ -43,24 +43,24 @@ export default function CustomerDetail() {
     navigate('/');
   };
 
-  if (loading) return <div className="p-8 text-center text-gray-400">Carregando...</div>;
-  if (!customer) return <div className="p-8 text-center text-gray-400">Cliente não encontrado</div>;
+  if (loading) return <div className="p-8 text-center text-muted-foreground">Carregando...</div>;
+  if (!customer) return <div className="p-8 text-center text-muted-foreground">Cliente não encontrado</div>;
 
   const profileCfg = customer.profile ? PROFILE_CONFIG[customer.profile] : null;
 
   return (
     <div className="p-6 md:p-8 max-w-4xl mx-auto">
-      <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 mb-6">
+      <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-6">
         <ArrowLeft className="w-4 h-4" /> Voltar para clientes
       </Link>
 
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+      <div className="bg-card rounded-2xl border border-border p-6 mb-6">
         <div className="flex items-start justify-between mb-4 gap-4">
           <div className="min-w-0">
-            <h1 className="text-2xl font-bold text-gray-900 truncate">{customer.name}</h1>
+            <h1 className="text-2xl font-bold text-foreground truncate">{customer.name}</h1>
             <div className="flex items-center gap-3 mt-2 flex-wrap">
               <StatusBadge status={customer.status} />
-              {profileCfg && <span className="text-sm text-gray-500">{profileCfg.emoji} {profileCfg.label}</span>}
+              {profileCfg && <span className="text-sm text-muted-foreground">{profileCfg.emoji} {profileCfg.label}</span>}
             </div>
           </div>
           <div className="flex gap-2 flex-shrink-0">
@@ -72,25 +72,25 @@ export default function CustomerDetail() {
             </Button>
           </div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-gray-50">
-          {customer.phone && <div><p className="text-xs text-gray-400 mb-0.5">Telefone</p><p className="text-sm font-medium">{customer.phone}</p></div>}
-          {customer.lead_source && <div><p className="text-xs text-gray-400 mb-0.5">Origem</p><p className="text-sm font-medium">{customer.lead_source}</p></div>}
-          {customer.objective && <div><p className="text-xs text-gray-400 mb-0.5">Objetivo</p><p className="text-sm font-medium">{customer.objective}</p></div>}
-          {customer.assigned_to && <div><p className="text-xs text-gray-400 mb-0.5">Responsável</p><p className="text-sm font-medium">{customer.assigned_to}</p></div>}
-          {customer.next_action && <div><p className="text-xs text-gray-400 mb-0.5">Próxima Ação</p><p className="text-sm font-medium text-orange-600">{customer.next_action}</p></div>}
-          {customer.trial_start_date && <div><p className="text-xs text-gray-400 mb-0.5">Início do Trial</p><p className="text-sm font-medium">{new Date(customer.trial_start_date).toLocaleDateString('pt-BR')}</p></div>}
-          {customer.enrollment_date && <div><p className="text-xs text-gray-400 mb-0.5">Matrícula</p><p className="text-sm font-medium">{new Date(customer.enrollment_date).toLocaleDateString('pt-BR')}</p></div>}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-border">
+          {customer.phone && <div><p className="text-xs text-muted-foreground mb-0.5">Telefone</p><p className="text-sm font-medium">{customer.phone}</p></div>}
+          {customer.lead_source && <div><p className="text-xs text-muted-foreground mb-0.5">Origem</p><p className="text-sm font-medium">{customer.lead_source}</p></div>}
+          {customer.objective && <div><p className="text-xs text-muted-foreground mb-0.5">Objetivo</p><p className="text-sm font-medium">{customer.objective}</p></div>}
+          {customer.assigned_to && <div><p className="text-xs text-muted-foreground mb-0.5">Responsável</p><p className="text-sm font-medium">{customer.assigned_to}</p></div>}
+          {customer.next_action && <div><p className="text-xs text-muted-foreground mb-0.5">Próxima Ação</p><p className="text-sm font-medium text-orange-400">{customer.next_action}</p></div>}
+          {customer.trial_start_date && <div><p className="text-xs text-muted-foreground mb-0.5">Início do Trial</p><p className="text-sm font-medium">{new Date(customer.trial_start_date).toLocaleDateString('pt-BR')}</p></div>}
+          {customer.enrollment_date && <div><p className="text-xs text-muted-foreground mb-0.5">Matrícula</p><p className="text-sm font-medium">{new Date(customer.enrollment_date).toLocaleDateString('pt-BR')}</p></div>}
         </div>
-        {customer.notes && <p className="text-sm text-gray-600 mt-4 pt-4 border-t border-gray-50">{customer.notes}</p>}
+        {customer.notes && <p className="text-sm text-muted-foreground mt-4 pt-4 border-t border-border">{customer.notes}</p>}
       </div>
 
       <CustomerJourney customer={customer} interactions={interactions} onSaved={loadData} />
 
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Histórico de Atendimentos</h2>
+      <h2 className="text-lg font-semibold text-foreground mb-4">Histórico de Atendimentos</h2>
       {interactions.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-100 p-8 text-center">
-          <BookOpen className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-          <p className="text-gray-400 text-sm">Nenhum atendimento registrado ainda</p>
+        <div className="bg-card rounded-xl border border-border p-8 text-center">
+          <BookOpen className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+          <p className="text-muted-foreground text-sm">Nenhum atendimento registrado ainda</p>
         </div>
       ) : (
         <div className="space-y-3">

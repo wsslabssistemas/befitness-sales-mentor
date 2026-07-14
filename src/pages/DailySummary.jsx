@@ -17,19 +17,19 @@ function SectionTitle({ icon: Icon, title, count, color }) {
       <div className={`w-7 h-7 ${color} rounded-lg flex items-center justify-center`}>
         <Icon className="w-4 h-4 text-white" />
       </div>
-      <h2 className="font-semibold text-gray-900 text-sm">{title}</h2>
-      {count > 0 && <span className="text-xs font-medium text-gray-400">({count})</span>}
+      <h2 className="font-semibold text-foreground text-sm">{title}</h2>
+      {count > 0 && <span className="text-xs font-medium text-muted-foreground">({count})</span>}
     </div>
   );
 }
 
 function CustomerRow({ c, showDate, highlight }) {
   return (
-    <Link to={`/cliente/${c.id}`} className={`block rounded-xl border p-3 hover:border-orange-200 transition-all mb-2 ${highlight || 'bg-white border-gray-100'}`}>
+    <Link to={`/cliente/${c.id}`} className={`block rounded-xl border p-3 hover:border-orange-500/40 transition-all mb-2 ${highlight || 'bg-card border-border'}`}>
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <p className="font-medium text-sm text-gray-900 truncate">{c.name}</p>
-          <p className="text-xs text-gray-500 truncate">
+          <p className="font-medium text-sm text-foreground truncate">{c.name}</p>
+          <p className="text-xs text-muted-foreground truncate">
             {showDate && c.next_action_date && `vencimento: ${c.next_action_date} — `}
             {c.next_action || c.objective || 'Sem ação definida'}
             {c.assigned_to && ` • Resp: ${c.assigned_to}`}
@@ -37,8 +37,8 @@ function CustomerRow({ c, showDate, highlight }) {
         </div>
         {c.phone && (
           <a href={getWhatsAppLink(c.phone)} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
-            className="w-7 h-7 rounded-lg bg-green-50 hover:bg-green-100 flex items-center justify-center transition-colors flex-shrink-0">
-            <Phone className="w-3.5 h-3.5 text-green-600" />
+            className="w-7 h-7 rounded-lg bg-green-500/10 hover:bg-green-500/20 flex items-center justify-center transition-colors flex-shrink-0">
+            <Phone className="w-3.5 h-3.5 text-green-400" />
           </a>
         )}
       </div>
@@ -60,7 +60,7 @@ export default function DailySummary() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="p-8 text-center text-gray-400">Carregando...</div>;
+  if (loading) return <div className="p-8 text-center text-muted-foreground">Carregando...</div>;
 
   const now = new Date();
   const todayDate = new Date(now); todayDate.setHours(0, 0, 0, 0);
@@ -118,21 +118,21 @@ export default function DailySummary() {
   return (
     <div className="p-6 md:p-8 max-w-5xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Resumo Diário</h1>
-        <p className="text-gray-500 text-sm mt-1">{todayDate.toLocaleDateString('pt-BR')} — tudo que você precisa para começar o dia</p>
+        <h1 className="text-2xl font-bold text-foreground">Resumo Diário</h1>
+        <p className="text-muted-foreground text-sm mt-1">{todayDate.toLocaleDateString('pt-BR')} — tudo que você precisa para começar o dia</p>
       </div>
 
       {/* KPIs do mês */}
       <div className="mb-6">
-        <p className="text-xs text-gray-400 mb-2 font-medium uppercase tracking-wide">Fechamento do Mês — {monthName}/{now.getFullYear()}</p>
+        <p className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wide">Fechamento do Mês — {monthName}/{now.getFullYear()}</p>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {kpis.map(k => (
-            <div key={k.label} className="bg-white rounded-xl border border-gray-100 p-4">
+            <div key={k.label} className="bg-card rounded-xl border border-border p-4">
               <div className={`w-8 h-8 ${k.color} rounded-lg flex items-center justify-center mb-2`}>
                 <k.icon className="w-4 h-4 text-white" />
               </div>
-              <p className="text-xl font-bold text-gray-900">{k.value}</p>
-              <p className="text-xs text-gray-500">{k.label}</p>
+              <p className="text-xl font-bold text-foreground">{k.value}</p>
+              <p className="text-xs text-muted-foreground">{k.label}</p>
             </div>
           ))}
         </div>
@@ -149,9 +149,9 @@ export default function DailySummary() {
           <SectionTitle icon={Trophy} title="Matrículas dos últimos 7 dias" count={recentMatriculas.length} color="bg-orange-500" />
           <div className="space-y-1.5">
             {recentMatriculas.map(i => (
-              <div key={i.id} className="bg-orange-50/50 rounded-lg p-3 text-sm">
-                <span className="font-medium text-gray-900">{i.customer_name || 'Cliente'}</span>
-                <span className="text-gray-400"> — atendido por: {i.handled_by || 'N/A'}</span>
+              <div key={i.id} className="bg-orange-500/10 rounded-lg p-3 text-sm">
+                <span className="font-medium text-foreground">{i.customer_name || 'Cliente'}</span>
+                <span className="text-muted-foreground"> — atendido por: {i.handled_by || 'N/A'}</span>
               </div>
             ))}
           </div>
@@ -163,7 +163,7 @@ export default function DailySummary() {
         <div className="mb-6">
           <SectionTitle icon={AlertCircle} title="Retornos Atrasados — Prioridade Máxima" count={overdue.length} color="bg-red-500" />
           <div>
-            {overdue.map(c => <CustomerRow key={c.id} c={c} showDate highlight="bg-red-50/40 border-red-100" />)}
+            {overdue.map(c => <CustomerRow key={c.id} c={c} showDate highlight="bg-red-500/10 border-red-500/20" />)}
           </div>
         </div>
       )}
@@ -184,18 +184,18 @@ export default function DailySummary() {
           <SectionTitle icon={Zap} title="Novos Leads sem Atendimento — Resposta Rápida = Conversão" count={newLeadsNoInteraction.length} color="bg-yellow-500" />
           <div>
             {newLeadsNoInteraction.map(c => (
-              <Link key={c.id} to={`/cliente/${c.id}`} className="block bg-white rounded-xl border border-yellow-200 p-3 hover:border-orange-200 transition-all mb-2">
+              <Link key={c.id} to={`/cliente/${c.id}`} className="block bg-card rounded-xl border border-yellow-500/30 p-3 hover:border-orange-500/40 transition-all mb-2">
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium text-sm text-gray-900 truncate">{c.name}</p>
-                    <p className="text-xs text-gray-500 truncate">
+                    <p className="font-medium text-sm text-foreground truncate">{c.name}</p>
+                    <p className="text-xs text-muted-foreground truncate">
                       {c.phone && `${c.phone} • `}
                       {c.lead_source || 'Sem origem'}
                     </p>
                   </div>
                   {c.phone && (
                     <a href={getWhatsAppLink(c.phone)} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
-                      className="px-3 py-1.5 rounded-lg bg-green-500 text-white text-xs font-medium hover:bg-green-600 transition-colors flex-shrink-0">
+                      className="px-3 py-1.5 rounded-lg bg-green-500/100 text-white text-xs font-medium hover:bg-green-600 transition-colors flex-shrink-0">
                       Atender agora
                     </a>
                   )}
@@ -214,23 +214,23 @@ export default function DailySummary() {
             {cooling.slice(0, 15).map(c => {
               const lastDate = c.last_interaction_date ? new Date(c.last_interaction_date).toLocaleDateString('pt-BR') : new Date(c.created_date).toLocaleDateString('pt-BR');
               return (
-                <Link key={c.id} to={`/cliente/${c.id}`} className="block bg-white rounded-xl border border-gray-100 p-3 hover:border-orange-200 transition-all mb-2">
+                <Link key={c.id} to={`/cliente/${c.id}`} className="block bg-card rounded-xl border border-border p-3 hover:border-orange-500/40 transition-all mb-2">
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <p className="font-medium text-sm text-gray-900 truncate">{c.name}</p>
-                      <p className="text-xs text-gray-500 truncate">último contato: {lastDate} — {c.next_action || 'Reabordar'}</p>
+                      <p className="font-medium text-sm text-foreground truncate">{c.name}</p>
+                      <p className="text-xs text-muted-foreground truncate">último contato: {lastDate} — {c.next_action || 'Reabordar'}</p>
                     </div>
                     {c.phone && (
                       <a href={getWhatsAppLink(c.phone)} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
-                        className="w-7 h-7 rounded-lg bg-green-50 hover:bg-green-100 flex items-center justify-center transition-colors flex-shrink-0">
-                        <Phone className="w-3.5 h-3.5 text-green-600" />
+                        className="w-7 h-7 rounded-lg bg-green-500/10 hover:bg-green-500/20 flex items-center justify-center transition-colors flex-shrink-0">
+                        <Phone className="w-3.5 h-3.5 text-green-400" />
                       </a>
                     )}
                   </div>
                 </Link>
               );
             })}
-            {cooling.length > 15 && <p className="text-xs text-gray-400 text-center mt-2">+{cooling.length - 15} cliente(s) esfriando...</p>}
+            {cooling.length > 15 && <p className="text-xs text-muted-foreground text-center mt-2">+{cooling.length - 15} cliente(s) esfriando...</p>}
           </div>
         </div>
       )}
@@ -246,8 +246,8 @@ export default function DailySummary() {
       )}
 
       {hasNothing && (
-        <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
-          <p className="text-gray-400 text-sm">Nada pendente para hoje. Tudo em dia! 🎉</p>
+        <div className="bg-card rounded-2xl border border-border p-8 text-center">
+          <p className="text-muted-foreground text-sm">Nada pendente para hoje. Tudo em dia! 🎉</p>
         </div>
       )}
     </div>

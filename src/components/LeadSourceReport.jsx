@@ -16,10 +16,10 @@ export default function LeadSourceReport({ customers }) {
   if (list.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6">
+    <div className="bg-card rounded-2xl border border-border p-6">
       <div className="flex items-center gap-2 mb-4">
         <BarChart3 className="w-5 h-5 text-orange-500" />
-        <p className="font-semibold text-gray-900">Conversão por Origem</p>
+        <p className="font-semibold text-foreground">Conversão por Origem</p>
       </div>
       <div className="space-y-4">
         {list.map(s => {
@@ -30,12 +30,12 @@ export default function LeadSourceReport({ customers }) {
           return (
             <div key={s.source}>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-medium text-gray-700">{s.source}</span>
-                <span className="text-xs text-gray-500">
+                <span className="text-sm font-medium text-foreground">{s.source}</span>
+                <span className="text-xs text-muted-foreground">
                   {s.total} clientes • {s.matriculados} matr. ({rate}%)
                 </span>
               </div>
-              <div className="flex gap-0.5 h-2.5 rounded-full bg-gray-100 overflow-hidden">
+              <div className="flex gap-0.5 h-2.5 rounded-full bg-secondary overflow-hidden">
                 <div className="bg-orange-500" style={{ width: `${matPct}%` }} />
                 <div className="bg-purple-400" style={{ width: `${trialPct}%` }} />
                 <div className="bg-blue-300" style={{ width: `${activePct}%` }} />
@@ -43,7 +43,7 @@ export default function LeadSourceReport({ customers }) {
             </div>
           );
         })}
-        <div className="flex items-center gap-4 pt-2 text-xs text-gray-400">
+        <div className="flex items-center gap-4 pt-2 text-xs text-muted-foreground">
           <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-orange-500" /> Matriculados</span>
           <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-purple-400" /> Trial</span>
           <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-300" /> Em atendimento</span>

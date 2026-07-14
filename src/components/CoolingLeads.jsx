@@ -26,25 +26,25 @@ export default function CoolingLeads({ customers, interactions }) {
   if (cooling.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6">
+    <div className="bg-card rounded-2xl border border-border p-6">
       <div className="flex items-center gap-2 mb-4 flex-wrap">
         <Flame className="w-5 h-5 text-orange-500" />
-        <p className="font-semibold text-gray-900">Leads Esfriando</p>
-        <span className="text-xs text-gray-400">sem atendimento há +{threshold} dias</span>
+        <p className="font-semibold text-foreground">Leads Esfriando</p>
+        <span className="text-xs text-muted-foreground">sem atendimento há +{threshold} dias</span>
       </div>
       <div className="space-y-2">
         {cooling.slice(0, 8).map(c => (
-          <Link key={c.id} to={`/cliente/${c.id}`} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+          <Link key={c.id} to={`/cliente/${c.id}`} className="flex items-center gap-3 p-2 rounded-lg hover:bg-secondary transition-colors">
             <AlertTriangle className={`w-4 h-4 flex-shrink-0 ${c.days >= 7 ? 'text-red-500' : 'text-amber-500'}`} />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">{c.name}</p>
-              <p className="text-xs text-gray-400">último: {c.lastDate.toLocaleDateString('pt-BR')}</p>
+              <p className="text-sm font-medium text-foreground truncate">{c.name}</p>
+              <p className="text-xs text-muted-foreground">último: {c.lastDate.toLocaleDateString('pt-BR')}</p>
             </div>
             <span className={`text-sm font-bold flex-shrink-0 ${c.days >= 7 ? 'text-red-500' : 'text-amber-500'}`}>{c.days}d</span>
           </Link>
         ))}
         {cooling.length > 8 && (
-          <p className="text-xs text-gray-400 text-center pt-2">+{cooling.length - 8} outros esfriando</p>
+          <p className="text-xs text-muted-foreground text-center pt-2">+{cooling.length - 8} outros esfriando</p>
         )}
       </div>
     </div>

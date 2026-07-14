@@ -57,7 +57,7 @@ export default function MonthlyReport() {
     : now.getFullYear();
   for (let y = now.getFullYear(); y >= minYear; y--) years.push(y);
 
-  if (loading) return <div className="p-8 text-center text-gray-400">Carregando...</div>;
+  if (loading) return <div className="p-8 text-center text-muted-foreground">Carregando...</div>;
 
   const handleDeleteSeller = async (name) => {
     try {
@@ -92,24 +92,24 @@ export default function MonthlyReport() {
   return (
     <div className="p-6 md:p-8 max-w-5xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Relatório Mensal</h1>
-        <p className="text-gray-500 text-sm mt-1">Fechamento comercial do período selecionado</p>
+        <h1 className="text-2xl font-bold text-foreground">Relatório Mensal</h1>
+        <p className="text-muted-foreground text-sm mt-1">Fechamento comercial do período selecionado</p>
       </div>
 
-      <div className="flex items-center justify-center gap-3 mb-6 bg-white rounded-2xl border border-gray-100 p-4">
+      <div className="flex items-center justify-center gap-3 mb-6 bg-card rounded-2xl border border-border p-4">
         <Button variant="outline" size="icon" onClick={goPrev}><ChevronLeft className="w-4 h-4" /></Button>
         <div className="flex items-center gap-2">
           <select
             value={month}
             onChange={e => setMonth(Number(e.target.value))}
-            className="px-3 py-2 rounded-lg border border-gray-200 text-sm font-medium"
+            className="px-3 py-2 rounded-lg border border-border text-sm font-medium"
           >
             {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
           </select>
           <select
             value={year}
             onChange={e => setYear(Number(e.target.value))}
-            className="px-3 py-2 rounded-lg border border-gray-200 text-sm font-medium"
+            className="px-3 py-2 rounded-lg border border-border text-sm font-medium"
           >
             {years.map(y => <option key={y} value={y}>{y}</option>)}
           </select>
@@ -119,12 +119,12 @@ export default function MonthlyReport() {
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
         {metrics.map(m => (
-          <div key={m.label} className="bg-white rounded-2xl border border-gray-100 p-4">
+          <div key={m.label} className="bg-card rounded-2xl border border-border p-4">
             <div className={`w-9 h-9 ${m.color} rounded-xl flex items-center justify-center mb-2`}>
               <m.icon className="w-4 h-4 text-white" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">{m.value}</p>
-            <p className="text-xs text-gray-500">{m.label}</p>
+            <p className="text-2xl font-bold text-foreground">{m.value}</p>
+            <p className="text-xs text-muted-foreground">{m.label}</p>
           </div>
         ))}
       </div>

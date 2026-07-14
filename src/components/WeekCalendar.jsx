@@ -74,27 +74,27 @@ export default function WeekCalendar({ customers }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6">
+    <div className="bg-card rounded-2xl border border-border p-6">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <p className="font-semibold text-gray-900 flex items-center gap-2">
+          <p className="font-semibold text-foreground flex items-center gap-2">
             <CalendarDays className="w-4 h-4 text-orange-500" />
             Agenda da Semana
           </p>
-          <p className="text-sm text-gray-400">{weekLabel} • {totalEvents} compromisso(s)</p>
+          <p className="text-sm text-muted-foreground">{weekLabel} • {totalEvents} compromisso(s)</p>
         </div>
         <div className="flex gap-1">
-          <button onClick={exportICS} className="px-3 h-8 rounded-lg border border-gray-200 hover:bg-gray-50 text-xs font-medium text-gray-500 flex items-center gap-1.5">
+          <button onClick={exportICS} className="px-3 h-8 rounded-lg border border-border hover:bg-secondary text-xs font-medium text-muted-foreground flex items-center gap-1.5">
             <Download className="w-3 h-3" />
             Exportar
           </button>
-          <button onClick={() => setWeekOffset(w => w - 1)} className="w-8 h-8 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-500">
+          <button onClick={() => setWeekOffset(w => w - 1)} className="w-8 h-8 rounded-lg border border-border hover:bg-secondary flex items-center justify-center text-muted-foreground">
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <button onClick={() => setWeekOffset(0)} className="px-3 h-8 rounded-lg border border-gray-200 hover:bg-gray-50 text-xs font-medium text-gray-500">
+          <button onClick={() => setWeekOffset(0)} className="px-3 h-8 rounded-lg border border-border hover:bg-secondary text-xs font-medium text-muted-foreground">
             Hoje
           </button>
-          <button onClick={() => setWeekOffset(w => w + 1)} className="w-8 h-8 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-500">
+          <button onClick={() => setWeekOffset(w => w + 1)} className="w-8 h-8 rounded-lg border border-border hover:bg-secondary flex items-center justify-center text-muted-foreground">
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
@@ -108,19 +108,19 @@ export default function WeekCalendar({ customers }) {
           const isPast = day < today && !isToday;
 
           return (
-            <div key={i} className={`rounded-xl border p-2 min-h-36 ${isToday ? 'border-orange-300 bg-orange-50/50' : isPast ? 'border-gray-100 bg-gray-50/50' : 'border-gray-100'}`}>
+            <div key={i} className={`rounded-xl border p-2 min-h-36 ${isToday ? 'border-orange-500/40 bg-orange-500/10' : isPast ? 'border-border bg-secondary/50' : 'border-border'}`}>
               <div className="text-center mb-1.5">
-                <p className="text-xs text-gray-400">{dayNames[i]}</p>
-                <p className={`text-sm font-semibold ${isToday ? 'text-orange-600' : isPast ? 'text-gray-300' : 'text-gray-700'}`}>{day.getDate()} {monthNames[day.getMonth()]}</p>
+                <p className="text-xs text-muted-foreground">{dayNames[i]}</p>
+                <p className={`text-sm font-semibold ${isToday ? 'text-orange-400' : isPast ? 'text-muted-foreground' : 'text-foreground'}`}>{day.getDate()} {monthNames[day.getMonth()]}</p>
               </div>
               <div className="space-y-1">
                 {events.slice(0, 3).map(c => (
-                  <Link key={c.id} to={`/cliente/${c.id}`} className={`block text-xs p-1.5 rounded-lg truncate hover:bg-orange-100 transition-colors ${isToday ? 'bg-white/70' : 'bg-orange-50'}`}>
-                    <p className="font-medium text-gray-700 truncate">{c.name}</p>
-                    <p className="text-gray-400 truncate">{c.next_action}</p>
+                  <Link key={c.id} to={`/cliente/${c.id}`} className={`block text-xs p-1.5 rounded-lg truncate hover:bg-orange-500/20 transition-colors ${isToday ? 'bg-card/70' : 'bg-orange-500/10'}`}>
+                    <p className="font-medium text-foreground truncate">{c.name}</p>
+                    <p className="text-muted-foreground truncate">{c.next_action}</p>
                   </Link>
                 ))}
-                {events.length > 3 && <p className="text-xs text-gray-400 text-center pt-0.5">+{events.length - 3}</p>}
+                {events.length > 3 && <p className="text-xs text-muted-foreground text-center pt-0.5">+{events.length - 3}</p>}
               </div>
             </div>
           );
@@ -128,7 +128,7 @@ export default function WeekCalendar({ customers }) {
       </div>
 
       {totalEvents === 0 && (
-        <div className="text-center py-8 text-sm text-gray-300">
+        <div className="text-center py-8 text-sm text-muted-foreground">
           Nenhum compromisso agendado para esta semana.
         </div>
       )}
