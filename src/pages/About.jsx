@@ -75,6 +75,9 @@ export default function About() {
               <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-background/50 border border-border rounded-lg px-3 py-1.5">
                 <Instagram className="w-3.5 h-3.5" /> @wss_labs
               </span>
+              <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-background/50 border border-border rounded-lg px-3 py-1.5">
+                <Globe className="w-3.5 h-3.5" /> www.wsslabs.com.br
+              </span>
             </div>
           </div>
         </div>
