@@ -1,6 +1,6 @@
 import {
   Info, Code2, Shield, Zap, Users, MessageSquare, BookOpen,
-  BarChart3, CheckCircle2, Mail, Globe, Cpu, Lock, Heart
+  BarChart3, CheckCircle2, Mail, Globe, Cpu, Lock, Heart, Instagram
 } from 'lucide-react';
 
 const FEATURES = [
@@ -70,10 +70,10 @@ export default function About() {
             </p>
             <div className="flex flex-wrap gap-2">
               <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-background/50 border border-border rounded-lg px-3 py-1.5">
-                <Mail className="w-3.5 h-3.5" /> contato@wsslabs.com.br
+                <Mail className="w-3.5 h-3.5" /> wsslabs.sistemas@gmail.com
               </span>
               <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-background/50 border border-border rounded-lg px-3 py-1.5">
-                <Globe className="w-3.5 h-3.5" /> www.wsslabs.com.br
+                <Instagram className="w-3.5 h-3.5" /> @wss_labs
               </span>
             </div>
           </div>
