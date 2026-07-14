@@ -23,7 +23,7 @@ const SECTIONS = [
     title: 'Gerenciando Clientes',
     icon: Users,
     color: 'blue',
-    description: 'Como navecar pela lista de leads e priorizar',
+    description: 'Como navegar pela lista de leads e priorizar',
     steps: [
       { title: 'Indicadores de urgência', content: 'No topo da lista você vê três contadores:\n• 🔴 Urgente — clientes com próxima ação atrasada\n• 🟡 Aguardando — esperando resposta do cliente\n• 🟢 Em Dia — sem pendências\n\nSempre comece pelos Urgentes — são os que mais esfriam.' },
       { title: 'Como criar um novo lead', content: 'Clique em "Novo Cliente". Preencha pelo menos o Nome e o Telefone (o sistema bloqueia telefones duplicados). Escolha a Origem do Lead (Instagram, WhatsApp, etc.) e o Perfil (iniciante, emagrecer, melhor idade...). Quanto mais detalhes, melhor a IA pode personalizar as respostas.' },
