@@ -33,14 +33,45 @@ Deno.serve(async (req) => {
       });
     }
 
-    // 2. Limite diário já consumido hoje
+    // 2. Limite diário já consumido hoje + orçamento mensal (créditos)
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
+    const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
     const recentLogs = await base44.asServiceRole.entities.AutomationLog.list('-run_date', 50);
     const consumedToday = (recentLogs || [])
       .filter(l => l.run_date && new Date(l.run_date) >= todayStart && l.mode === 'automatico')
       .reduce((s, l) => s + (l.messages_generated || 0), 0);
     let dailyRemaining = Math.max(0, config.max_messages_per_day - consumedToday);
+
+    // Orçamento mensal: soma de créditos estimados no mês atual (modo automático)
+    const monthSpent = (recentLogs || [])
+      .filter(l => l.run_date && new Date(l.run_date) >= monthStart && l.mode === 'automatico')
+      .reduce((s, l) => s + (l.estimated_credits || 0), 0);
+    const budgetReached = config.monthly_credit_budget > 0 && monthSpent >= config.monthly_credit_budget;
+
+    // Bloqueio por orçamento: automação suspende até o ciclo reiniciar (virada do mês)
+    if (budgetReached && !forceSim) {
+      await base44.asServiceRole.entities.AutomationLog.create({
+        run_date: new Date().toISOString(),
+        mode: 'simulacao',
+        triggered_by: triggeredBy,
+        customers_due: 0,
+        messages_generated: 0,
+        messages_skipped: 0,
+        skip_reasons: 'Orçamento mensal atingido — automação suspensa até o ciclo reiniciar',
+        llm_calls: 0,
+        estimated_tokens: 0,
+        estimated_credits: 0,
+        status: 'ok',
+      });
+      return Response.json({
+        mode: 'bloqueado_orcamento',
+        message: 'Orçamento mensal atingido. Automação suspensa até a virada do ciclo (30 dias).',
+        mes_gasto: monthSpent,
+        orcamento: config.monthly_credit_budget,
+        config,
+      });
+    }
 
     // 3. Clientes com next_action_date vencida
     const today = new Date();

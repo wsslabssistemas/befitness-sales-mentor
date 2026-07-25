@@ -28,7 +28,10 @@ export default function Automacao() {
       const settings = await base44.entities.Setting.list();
       const map = {};
       for (const s of settings) map[s.key] = s.value;
-      setConfig({ auto_mode: map.auto_mode || 'off' });
+      setConfig({
+        auto_mode: map.auto_mode || 'off',
+        monthly_credit_budget: Number(map.auto_monthly_budget) || 0,
+      });
     } catch (e) { console.error(e); }
   };
 
@@ -105,6 +108,33 @@ export default function Automacao() {
         <SummaryCard label="Mensagens bloqueadas" value={monthSkipped} tone="amber" />
         <SummaryCard label="Créditos estimados" value={monthCredits} tone="orange" sub={`${monthTokens.toLocaleString('pt-BR')} tokens`} />
       </div>
+
+      {/* Indicador de orçamento mensal */}
+      {config.monthly_credit_budget > 0 && (
+        <div className={`rounded-xl border p-4 flex items-center gap-3 ${
+          monthCredits >= config.monthly_credit_budget
+            ? 'bg-red-500/10 border-red-500/30'
+            : 'bg-card border-border'
+        }`}>
+          <AlertTriangle className={`w-5 h-5 ${monthCredits >= config.monthly_credit_budget ? 'text-red-400' : 'text-orange-400'}`} />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-foreground">
+              Orçamento mensal: {monthCredits} / {config.monthly_credit_budget} créditos
+            </p>
+            <div className="h-2 bg-secondary rounded-full mt-1.5 overflow-hidden">
+              <div
+                className={`h-full rounded-full ${monthCredits >= config.monthly_credit_budget ? 'bg-red-500' : 'bg-orange-500'}`}
+                style={{ width: `${Math.min(100, (monthCredits / config.monthly_credit_budget) * 100)}%` }}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {monthCredits >= config.monthly_credit_budget
+                ? 'Orçamento atingido — automação suspensa até a virada do mês.'
+                : `Restam ${config.monthly_credit_budget - monthCredits} créditos neste ciclo.`}
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Preview da simulação */}
       {preview && (

@@ -14,6 +14,7 @@ const FIELDS = [
   { key: 'working_window_start', label: 'Início da janela (h)', hint: 'Horário a partir do qual a automação opera' },
   { key: 'working_window_end', label: 'Fim da janela (h)', hint: 'Horário em que a automação para' },
   { key: 'stop_bothering_days', label: 'Parar de incomodar (dias)', hint: 'Sem engajamento por N dias → bloqueia' },
+  { key: 'monthly_credit_budget', label: 'Orçamento mensal (créditos)', hint: '0 = sem limite. Ao atingir, suspende até a virada do mês (30 dias)' },
 ];
 
 export default function AutomacaoConfig() {

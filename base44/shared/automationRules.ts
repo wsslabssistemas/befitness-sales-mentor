@@ -9,6 +9,7 @@ export const DEFAULT_CONFIG = {
   working_window_start: 9,
   working_window_end: 19,
   stop_bothering_days: 14,
+  monthly_credit_budget: 0,
   auto_mode: 'off',
 };
 
@@ -30,6 +31,7 @@ export function loadConfig(settingsArr) {
     working_window_start: num('auto_window_start', DEFAULT_CONFIG.working_window_start),
     working_window_end: num('auto_window_end', DEFAULT_CONFIG.working_window_end),
     stop_bothering_days: num('auto_stop_days', DEFAULT_CONFIG.stop_bothering_days),
+    monthly_credit_budget: num('auto_monthly_budget', DEFAULT_CONFIG.monthly_credit_budget),
     auto_mode: map.auto_mode || 'off',
   };
 }
@@ -44,6 +46,7 @@ export function configToSettings(config) {
     { key: 'auto_window_start', value: String(config.working_window_start) },
     { key: 'auto_window_end', value: String(config.working_window_end) },
     { key: 'auto_stop_days', value: String(config.stop_bothering_days) },
+    { key: 'auto_monthly_budget', value: String(config.monthly_credit_budget) },
   ];
 }
 
