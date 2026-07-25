@@ -6,6 +6,7 @@ import {
   estimateTokens,
   estimateCredits,
 } from '../../shared/automationRules.ts';
+import { computeConsumption, summarizeSkips } from '../../shared/automationBudget.ts';
 
 Deno.serve(async (req) => {
   try {
@@ -34,20 +35,9 @@ Deno.serve(async (req) => {
     }
 
     // 2. Limite diário já consumido hoje + orçamento mensal (créditos)
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
-    const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
     const recentLogs = await base44.asServiceRole.entities.AutomationLog.list('-run_date', 50);
-    const consumedToday = (recentLogs || [])
-      .filter(l => l.run_date && new Date(l.run_date) >= todayStart && l.mode === 'automatico')
-      .reduce((s, l) => s + (l.messages_generated || 0), 0);
+    const { monthSpent, budgetReached, consumedToday } = computeConsumption(recentLogs, config);
     let dailyRemaining = Math.max(0, config.max_messages_per_day - consumedToday);
-
-    // Orçamento mensal: soma de créditos estimados no mês atual (modo automático)
-    const monthSpent = (recentLogs || [])
-      .filter(l => l.run_date && new Date(l.run_date) >= monthStart && l.mode === 'automatico')
-      .reduce((s, l) => s + (l.estimated_credits || 0), 0);
-    const budgetReached = config.monthly_credit_budget > 0 && monthSpent >= config.monthly_credit_budget;
 
     // Bloqueio por orçamento: automação suspende até o ciclo reiniciar (virada do mês)
     if (budgetReached && !forceSim) {
@@ -301,12 +291,6 @@ function countByPublic(tasks) {
   const counts = { sem_matricula: 0, convenio: 0, matriculado: 0 };
   for (const t of tasks) counts[t.publico] = (counts[t.publico] || 0) + 1;
   return counts;
-}
-
-function summarizeSkips(skips) {
-  const map = {};
-  for (const s of skips) map[s.motivo] = (map[s.motivo] || 0) + 1;
-  return Object.entries(map).map(([k, v]) => `${k}: ${v}`).join(' | ');
 }
 
 function buildProactivePrompt(t) {
