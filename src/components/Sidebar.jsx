@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { Users, MessageSquare, BookOpen, BarChart3, FileText, Clock, GraduationCap, Info } from 'lucide-react';
+import { Users, MessageSquare, BookOpen, BarChart3, FileText, Clock, GraduationCap, Info, Bot } from 'lucide-react';
 import InstallAppModal from './InstallAppModal';
 import DigitalClock from './DigitalClock';
 
@@ -16,6 +16,7 @@ const navItems = [
   { to: '/resumo-diario', label: 'Resumo Diário', icon: Clock, end: false },
   { to: '/tutorial', label: 'Tutorial', icon: GraduationCap, end: false },
   { to: '/sobre', label: 'Sobre', icon: Info, end: false },
+  { to: '/automacao', label: 'Automação', icon: Bot, end: false },
 ];
 
 export default function Sidebar() {

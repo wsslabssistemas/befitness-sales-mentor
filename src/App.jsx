@@ -17,6 +17,7 @@ import MonthlyReport from '@/pages/MonthlyReport';
 import DailySummary from '@/pages/DailySummary';
 import Tutorial from '@/pages/Tutorial';
 import About from '@/pages/About';
+import Automacao from '@/pages/Automacao';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -54,6 +55,7 @@ const AuthenticatedApp = () => {
         <Route path="/resumo-diario" element={<DailySummary />} />
         <Route path="/tutorial" element={<Tutorial />} />
         <Route path="/sobre" element={<About />} />
+        <Route path="/automacao" element={<Automacao />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

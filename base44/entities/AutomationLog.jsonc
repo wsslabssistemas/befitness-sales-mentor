@@ -1,0 +1,78 @@
+{
+  "name": "AutomationLog",
+  "type": "object",
+  "properties": {
+    "run_date": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Data da Execu\u00e7\u00e3o"
+    },
+    "mode": {
+      "type": "string",
+      "title": "Modo",
+      "enum": [
+        "simulacao",
+        "automatico"
+      ],
+      "default": "simulacao"
+    },
+    "triggered_by": {
+      "type": "string",
+      "title": "Disparado Por",
+      "enum": [
+        "manual",
+        "agendado"
+      ],
+      "default": "manual"
+    },
+    "customers_due": {
+      "type": "number",
+      "title": "Clientes Devidos"
+    },
+    "messages_generated": {
+      "type": "number",
+      "title": "Mensagens Geradas",
+      "default": 0
+    },
+    "messages_skipped": {
+      "type": "number",
+      "title": "Mensagens Bloqueadas",
+      "default": 0
+    },
+    "skip_reasons": {
+      "type": "string",
+      "title": "Motivos de Bloqueio"
+    },
+    "llm_calls": {
+      "type": "number",
+      "title": "Chamadas de IA",
+      "default": 0
+    },
+    "estimated_tokens": {
+      "type": "number",
+      "title": "Tokens Estimados",
+      "default": 0
+    },
+    "estimated_credits": {
+      "type": "number",
+      "title": "Cr\u00e9ditos Estimados",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "ok",
+        "erro"
+      ],
+      "default": "ok"
+    },
+    "error": {
+      "type": "string",
+      "title": "Erro"
+    }
+  },
+  "required": [
+    "run_date"
+  ]
+}
