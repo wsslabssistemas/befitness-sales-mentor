@@ -5,6 +5,7 @@ import { Loader2, Play, Zap, ShieldCheck, AlertTriangle } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import AutomacaoConfig from '@/components/AutomacaoConfig';
+import AutomacaoChannels from '@/components/AutomacaoChannels';
 import AutomationLogTable from '@/components/AutomationLogTable';
 
 export default function Automacao() {
@@ -169,6 +170,9 @@ export default function Automacao() {
           )}
         </div>
       )}
+
+      {/* Canais e regras */}
+      <AutomacaoChannels />
 
       {/* Config */}
       <AutomacaoConfig />
