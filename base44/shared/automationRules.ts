@@ -52,13 +52,16 @@ export function configToSettings(config) {
 
 // Avalia se a automação PODE gerar uma mensagem proativa para o cliente.
 // Retorna { canSend: boolean, reason: string }
-export function evaluateSafety(customer, lastInteractions, config, now = new Date()) {
+export function evaluateSafety(customer, lastInteractions, config, now = new Date(), ignoreWindow = false) {
   const interactions = lastInteractions || [];
 
   // 1. Janela de horário (evita mandar fora do horário comercial) — fuso de São Paulo
-  const hour = getSPHour(now);
-  if (hour < config.working_window_start || hour >= config.working_window_end) {
-    return { canSend: false, reason: 'Fora da janela de horário permitida' };
+  // ignoreWindow=true bypassa essa checagem (usado no envio aprovado manualmente).
+  if (!ignoreWindow) {
+    const hour = getSPHour(now);
+    if (hour < config.working_window_start || hour >= config.working_window_end) {
+      return { canSend: false, reason: 'Fora da janela de horário permitida' };
+    }
   }
 
   // 2. Cooldown desde o último contato
