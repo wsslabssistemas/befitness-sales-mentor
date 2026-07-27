@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import { Phone, ChevronRight, MessageCircle, AlertCircle, Clock, CheckCircle2, Pause, Circle } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Phone, ChevronRight, MessageCircle, CreditCard, AlertCircle, Clock, CheckCircle2, Pause, Circle } from 'lucide-react';
 import StatusBadge from '@/components/StatusBadge';
 
 function getWhatsAppLink(phone) {
@@ -62,6 +62,7 @@ const ACTION_STATUS = {
 };
 
 export default function CustomerCard({ customer, now }) {
+  const navigate = useNavigate();
   const actionKey = getActionStatus(customer, now);
   const action = ACTION_STATUS[actionKey];
   const { Icon } = action;
@@ -94,6 +95,16 @@ export default function CustomerCard({ customer, now }) {
               {customer.phone && <span className="flex items-center gap-1 text-muted-foreground text-xs"><Phone className="w-3 h-3" />{customer.phone}</span>}
             </div>
           </div>
+          {(customer.status === 'matriculado' || customer.status === 'renovado') && (
+            <button
+              type="button"
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/atendimento?customer=${customer.id}&modo=cobranca`); }}
+              className="w-9 h-9 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 flex items-center justify-center flex-shrink-0 transition-colors"
+              title="Cobrar parcela em atraso"
+            >
+              <CreditCard className="w-4 h-4 text-amber-500" />
+            </button>
+          )}
           {customer.phone && (
             <a
               href={getWhatsAppLink(customer.phone)}

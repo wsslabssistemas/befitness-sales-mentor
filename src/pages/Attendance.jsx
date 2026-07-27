@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { Sparkles, Loader2, Users } from 'lucide-react';
+import { Sparkles, Loader2, Users, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -16,12 +16,14 @@ export default function Attendance() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const preselectedCustomer = searchParams.get('customer');
+  const isCobranca = searchParams.get('modo') === 'cobranca';
 
   const [customers, setCustomers] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [selectedVendor, setSelectedVendor] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(preselectedCustomer || '');
   const [profile, setProfile] = useState('outro');
+  const [situacao, setSituacao] = useState('em_dia');
   const [conversation, setConversation] = useState('');
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -41,7 +43,7 @@ export default function Attendance() {
   }, [selectedCustomer]);
 
   const handleAnalyze = async () => {
-    if (!conversation.trim()) return;
+    if (!conversation.trim() && !isCobranca) return;
     setLoading(true);
     setAnalysis(null);
     try {
@@ -80,6 +82,14 @@ export default function Attendance() {
       const dayName = format(now, "EEEE", { locale: ptBR });
       const timeStr = format(now, "HH:mm");
       const isOpenNow = isOpenAt(now);
+
+      const cobrancaDirective = isCobranca ? `
+MODO COBRANÇA — MENSAGEM PROATIVA DE COBRANÇA:
+Situação do cliente: ${situacao === 'em_dia' ? 'está vindo (aluno ativo, só atrasou pagamento)' : 'parou de vir (sumiu da academia e deve parcelas)'}.
+Use PRIORITARIAMENTE a entrada da biblioteca "Cobrança / Financeiro" cuja pergunta contém "${situacao === 'em_dia' ? 'em dia' : 'parou de vir'}".
+${situacao === 'em_dia' ? 'TOM: suave, preservar 100% o relacionamento. Presumir esquecimento/erro externo, não intenção. Oferecer reenvio do boleto/PIX. NUNCA ameaçar com bloqueio.' : 'TOM: reconexão afetiva PRIMEIRO — mostre que sente falta dele. Só então trate a pendência, sem pressão. Prioridade é fazê-lo VOLTAR; o dinheiro vem depois. Conduza a remarcar um horário (Fechamento Pressuposto/Alternativa).'}
+NUNCA use "o que acha?". Gere UMA mensagem curta, humana, pronta para WhatsApp.
+` : '';
 
       const prompt = `Você é o Assistente Comercial Inteligente da academia Be Fitness. Sua missão é orientar o recepcionista durante o atendimento, sugerindo a melhor resposta para o cliente e explicando a técnica comercial utilizada.
 
@@ -273,10 +283,10 @@ STATUS DISPONÍVEIS: novo_contato, descobrindo_necessidade, proposta_enviada, ne
 
 Se a conversa indicar claramente que o cliente está pronto para um novo estágio, preencha status_sugerido com o novo status e motivo_status com a explicação. Caso contrário, deixe status_sugerido vazio.
 
-CONVERSA DO WHATSAPP (o cliente escreveu):
-${conversation}
+${cobrancaDirective}
+${conversation.trim() ? `CONVERSA DO WHATSAPP (o cliente escreveu):\n${conversation}` : (isCobranca ? 'CONTEXTO: mensagem proativa iniciada por nós (cobrança). O cliente ainda não escreveu nada.' : '')}
 
-Analise esta conversa e gere a melhor resposta para enviar ao cliente agora.`;
+Analise e gere a melhor resposta para enviar ao cliente agora.`;
 
       const result = await base44.integrations.Core.InvokeLLM({
         prompt,
@@ -441,6 +451,39 @@ Analise esta conversa e gere a melhor resposta para enviar ao cliente agora.`;
         <p className="text-muted-foreground text-sm mt-1">Cole a conversa do WhatsApp e receba a melhor resposta com explicação comercial</p>
       </div>
 
+      {isCobranca && (
+        <div className="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <CreditCard className="w-5 h-5 text-amber-500" />
+            <h2 className="font-semibold text-foreground">Modo Cobrança</h2>
+          </div>
+          <p className="text-sm text-muted-foreground mb-3">
+            Gere uma mensagem de cobrança suave e personalizada. Escolha a situação do cliente para ajustar o tom:
+          </p>
+          <div className="flex gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => setSituacao('em_dia')}
+              className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${situacao === 'em_dia' ? 'bg-amber-500 text-white border-amber-500' : 'bg-transparent text-muted-foreground border-border hover:text-foreground'}`}
+            >
+              Está vindo (aluno ativo)
+            </button>
+            <button
+              type="button"
+              onClick={() => setSituacao('parou')}
+              className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${situacao === 'parou' ? 'bg-amber-500 text-white border-amber-500' : 'bg-transparent text-muted-foreground border-border hover:text-foreground'}`}
+            >
+              Parou de vir (sumiu)
+            </button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            {situacao === 'em_dia'
+              ? 'Tom suave: presume esquecimento, preserva o relacionamento, oferece reenvio do boleto.'
+              : 'Reconexão primeiro: mostra que sente falta, depois trata a pendência sem pressão — prioridade é fazê-lo voltar.'}
+          </p>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div>
           <Label className="mb-1.5 block">Cliente</Label>
@@ -490,14 +533,14 @@ Analise esta conversa e gere a melhor resposta para enviar ao cliente agora.`;
 
       <Button
         onClick={handleAnalyze}
-        disabled={!conversation.trim() || loading}
+        disabled={(!conversation.trim() && !isCobranca) || loading}
         className="w-full bg-orange-500 hover:bg-orange-600 text-white mb-6"
         size="lg"
       >
         {loading ? (
           <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Analisando conversa...</>
         ) : (
-          <><Sparkles className="w-4 h-4 mr-2" /> Analisar Conversa</>
+          <><Sparkles className="w-4 h-4 mr-2" /> {isCobranca ? 'Gerar Mensagem de Cobrança' : 'Analisar Conversa'}</>
         )}
       </Button>
 
