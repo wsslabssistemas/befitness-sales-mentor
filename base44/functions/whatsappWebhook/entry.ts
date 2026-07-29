@@ -2,10 +2,13 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { loadConfig, evaluateSafety } from '../../shared/automationRules.ts';
 
 // Lê as credenciais do WhatsApp do banco (Setting) com fallback para env vars.
+// O try/catch garante que GET do Meta (sem auth) não quebre se o banco estiver inacessível.
 async function getWhatsAppConfig(base44) {
-  const settings = await base44.asServiceRole.entities.Setting.list();
-  const map = {};
-  for (const s of settings) map[s.key] = s.value;
+  let map = {};
+  try {
+    const settings = await base44.asServiceRole.entities.Setting.list();
+    for (const s of settings) map[s.key] = s.value;
+  } catch (_) { /* fallback para env vars */ }
   return {
     verifyToken: map.whatsapp_verify_token || Deno.env.get('WHATSAPP_VERIFY_TOKEN') || 'befitness_verify_2024',
     token: map.whatsapp_token || Deno.env.get('WHATSAPP_TOKEN') || '',
@@ -17,9 +20,9 @@ async function getWhatsAppConfig(base44) {
 Deno.serve(async (req) => {
   try {
     // GET = verificação do webhook (Meta chama ao cadastrar)
+    // Usa o secret direto (env var) para máxima confiabilidade no handshake.
     if (req.method === 'GET') {
-      const base44 = createClientFromRequest(req);
-      const { verifyToken } = await getWhatsAppConfig(base44);
+      const verifyToken = Deno.env.get('WHATSAPP_VERIFY_TOKEN') || 'befitness_verify_2024';
       const url = new URL(req.url);
       const mode = url.searchParams.get('hub.mode');
       const token = url.searchParams.get('hub.verify_token');
