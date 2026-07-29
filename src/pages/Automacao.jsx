@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import AutomacaoConfig from '@/components/AutomacaoConfig';
 import AutomacaoChannels from '@/components/AutomacaoChannels';
+import WhatsAppConfig from '@/components/WhatsAppConfig';
 import AutomationLogTable from '@/components/AutomationLogTable';
 
 export default function Automacao() {
@@ -264,6 +265,9 @@ export default function Automacao() {
 
       {/* Canais e regras */}
       <AutomacaoChannels />
+
+      {/* Credenciais WhatsApp */}
+      <WhatsAppConfig />
 
       {/* Config */}
       <AutomacaoConfig />

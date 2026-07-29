@@ -1,20 +1,30 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { loadConfig, evaluateSafety } from '../../shared/automationRules.ts';
 
-const VERIFY_TOKEN = Deno.env.get('WHATSAPP_VERIFY_TOKEN') || 'befitness_verify_2024';
-const TOKEN = Deno.env.get('WHATSAPP_TOKEN');
-const PHONE_NUMBER_ID = Deno.env.get('WHATSAPP_PHONE_NUMBER_ID');
-const APP_SECRET = Deno.env.get('WHATSAPP_APP_SECRET');
+// Lê as credenciais do WhatsApp do banco (Setting) com fallback para env vars.
+async function getWhatsAppConfig(base44) {
+  const settings = await base44.asServiceRole.entities.Setting.list();
+  const map = {};
+  for (const s of settings) map[s.key] = s.value;
+  return {
+    verifyToken: map.whatsapp_verify_token || Deno.env.get('WHATSAPP_VERIFY_TOKEN') || 'befitness_verify_2024',
+    token: map.whatsapp_token || Deno.env.get('WHATSAPP_TOKEN') || '',
+    phoneNumberId: map.whatsapp_phone_number_id || Deno.env.get('WHATSAPP_PHONE_NUMBER_ID') || '',
+    appSecret: map.whatsapp_app_secret || Deno.env.get('WHATSAPP_APP_SECRET') || '',
+  };
+}
 
 Deno.serve(async (req) => {
   try {
     // GET = verificação do webhook (Meta chama ao cadastrar)
     if (req.method === 'GET') {
+      const base44 = createClientFromRequest(req);
+      const { verifyToken } = await getWhatsAppConfig(base44);
       const url = new URL(req.url);
       const mode = url.searchParams.get('hub.mode');
       const token = url.searchParams.get('hub.verify_token');
       const challenge = url.searchParams.get('hub.challenge');
-      if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+      if (mode === 'subscribe' && token === verifyToken) {
         return new Response(challenge || '', { status: 200, headers: { 'Content-Type': 'text/plain' } });
       }
       return new Response('Forbidden', { status: 403 });
@@ -27,10 +37,13 @@ Deno.serve(async (req) => {
     // POST = evento do WhatsApp (mensagem recebida ou atualização de status)
     const bodyText = await req.text();
 
+    const base44 = createClientFromRequest(req);
+    const waConfig = await getWhatsAppConfig(base44);
+
     // Validação da assinatura (App Secret) — se configurado
-    if (APP_SECRET) {
+    if (waConfig.appSecret) {
       const sig = req.headers.get('x-hub-signature-256') || '';
-      const expected = await hmacSha256(APP_SECRET, bodyText);
+      const expected = await hmacSha256(waConfig.appSecret, bodyText);
       if (sig !== `sha256=${expected}`) {
         return Response.json({ error: 'Assinatura inválida' }, { status: 401 });
       }
@@ -54,8 +67,6 @@ Deno.serve(async (req) => {
     if (msgType !== 'text' || !text) {
       return Response.json({ status: 'ok', type: msgType, skip: true });
     }
-
-    const base44 = createClientFromRequest(req);
 
     // Busca ou cria o cliente pelo telefone
     const existing = await base44.asServiceRole.entities.Customer.filter({ phone: from });
@@ -151,14 +162,14 @@ Gere a resposta agora.`;
 
     // Envia via WhatsApp Cloud API
     let sent = false;
-    if (TOKEN && PHONE_NUMBER_ID) {
+    if (waConfig.token && waConfig.phoneNumberId) {
       try {
         const res = await fetch(
-          `https://graph.facebook.com/v18.0/${PHONE_NUMBER_ID}/messages`,
+          `https://graph.facebook.com/v18.0/${waConfig.phoneNumberId}/messages`,
           {
             method: 'POST',
             headers: {
-              Authorization: `Bearer ${TOKEN}`,
+              Authorization: `Bearer ${waConfig.token}`,
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
